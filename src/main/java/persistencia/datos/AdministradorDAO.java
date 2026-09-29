@@ -36,7 +36,7 @@ public class AdministradorDAO implements IAdministradorDAO {
     @Override
     public AdministradorEntidad login(String usuario, String contrasena) throws PersistenciaException {
         // Buscamos al admin validando su contraseña encriptada
-        String sql = "SELECT idAdministrador, nombre FROM administrador_evento WHERE usuario = ? AND contraseña = SHA2(?, 256)";
+        String sql = "SELECT idAdministrador, idEmpresa, nombre FROM administrador_evento WHERE usuario = ? AND contraseña = SHA2(?, 256)";
         
         try (Connection conexionBD = conexion.crearConexion();
              PreparedStatement comando = conexionBD.prepareStatement(sql)) {
@@ -49,6 +49,7 @@ public class AdministradorDAO implements IAdministradorDAO {
                     AdministradorEntidad admin = new AdministradorEntidad();
                     admin.setIdAdministrador(rs.getInt("idAdministrador"));
                     admin.setNombre(rs.getString("nombre"));
+                    admin.setIdEmpresa(rs.getInt("idEmpresa"));
                     return admin;
                 }
                 return null; // Credenciales incorrectas

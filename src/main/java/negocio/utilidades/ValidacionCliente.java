@@ -55,6 +55,7 @@ public class ValidacionCliente {
                 throw new NegocioException("El nombre de usuario ya está registrado en el sistema. Elige otro.");
             }
         } catch (PersistenciaException ex) {
+            ex.printStackTrace();
             throw new NegocioException("Error al verificar la disponibilidad del usuario en el sistema.", ex);
         }
 

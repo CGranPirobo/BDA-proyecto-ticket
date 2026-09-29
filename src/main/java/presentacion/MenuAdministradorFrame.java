@@ -1,5 +1,6 @@
 package presentacion;
 
+import dtos.AdministradorDTO;
 import javax.swing.*;
 import java.awt.*;
 
@@ -8,8 +9,10 @@ public class MenuAdministradorFrame extends JFrame {
     private JButton btnCrearEvento;
     private JButton btnConfigurarCuentas;
     private JButton btnCerrarSesion;
+    private final AdministradorDTO admin;
 
-    public MenuAdministradorFrame() {
+    public MenuAdministradorFrame(AdministradorDTO admin) {
+        this.admin = admin;
         configurarVentana();
         inicializarComponentes();
     }
@@ -54,13 +57,11 @@ public class MenuAdministradorFrame extends JFrame {
 
         // Acciones
         btnCrearEvento.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Módulo de Creación de Eventos en construcción.");
-            // new CrearEventoFrame().setVisible(true);
+            new CrearEventoFrame(admin).setVisible(true);
         });
 
         btnConfigurarCuentas.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Módulo de Cuentas Bancarias en construcción.");
-            // new ConfigurarCuentasAdminFrame().setVisible(true);
+           new CuentasEmpresa(admin).setVisible(true);
         });
 
         btnCerrarSesion.addActionListener(e -> {

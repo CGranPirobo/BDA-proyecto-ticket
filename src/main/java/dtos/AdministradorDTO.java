@@ -12,6 +12,15 @@ public class AdministradorDTO {
 
     private int idAdministrador;
     private String nombre;
+    private int idEmpresa;
+
+    public int getIdEmpresa() {
+        return idEmpresa;
+    }
+
+    public void setIdEmpresa(int idEmpresa) {
+        this.idEmpresa = idEmpresa;
+    }
 
     public AdministradorDTO() {
     }

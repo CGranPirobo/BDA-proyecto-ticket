@@ -27,6 +27,7 @@ public class LoginFrame extends JFrame {
     private JPasswordField txtContrasena;
     private JButton btnIngresar;
     private JButton btnRegistrarse;
+    
 
     public LoginFrame() {
         IConexion conexion = new Conexion();
@@ -74,6 +75,7 @@ public class LoginFrame extends JFrame {
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         btnIngresar = new JButton("Ingresar");
         btnRegistrarse = new JButton("Registrarse");
+       
 
         btnIngresar.addActionListener(this::btnIngresarActionPerformed);
         btnRegistrarse.addActionListener(e -> new RegistroClienteFrame2().setVisible(true));
@@ -114,7 +116,7 @@ public class LoginFrame extends JFrame {
 
                 // Si llega a esta línea, es un administrador válido
                 JOptionPane.showMessageDialog(this, "¡Acceso concedido! Bienvenido al panel administrativo, " + adminLogueado.getNombre() + ".", "Modo Administrador", JOptionPane.INFORMATION_MESSAGE);
-                new MenuAdministradorFrame().setVisible(true);
+                new MenuAdministradorFrame(adminLogueado).setVisible(true);
                 this.dispose();
 
             } catch (NegocioException exAdmin) {

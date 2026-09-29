@@ -27,6 +27,7 @@ public class AdministradorNegocio implements IAdministradorNegocio {
             AdministradorDTO dto = new AdministradorDTO();
             dto.setIdAdministrador(entidad.getIdAdministrador());
             dto.setNombre(entidad.getNombre());
+            dto.setIdEmpresa(entidad.getIdEmpresa());
             
             return dto;
             
