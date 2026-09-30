@@ -7,8 +7,8 @@ package negocio.utilidades;
 import Persistencias.PersistenciaException;
 import dtos.CrearClienteDTO;
 import negocio.NegocioException;
-import persistencia.datos.IAdministradorDAO;
-import persistencia.datos.IClienteDAO;
+import persistencia.datos.interfaces.IAdministradorDAO;
+import persistencia.datos.interfaces.IClienteDAO;
 
 /**
  *

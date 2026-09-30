@@ -1,22 +1,20 @@
 package negocio;
 
+import negocio.interfaces.ICuentaEmpresaNegocio;
 import Persistencias.PersistenciaException;
 import dtos.CuentaEmpresaDTO;
 import entidad.CuentaEmpresaEntidad;
 import java.util.ArrayList;
 import java.util.List;
-import persistencia.datos.ICuentaEmpresaDAO;
+import persistencia.datos.interfaces.ICuentaEmpresaDAO;
 
+public class CuentaEmpresaNegocio implements ICuentaEmpresaNegocio {
 
-public class CuentaEmpresaNegocio implements ICuentaEmpresaNegocio{
-    
     private final ICuentaEmpresaDAO cuentaDAO;
 
     public CuentaEmpresaNegocio(ICuentaEmpresaDAO cuentaDAO) {
         this.cuentaDAO = cuentaDAO;
     }
-    
-    
 
     @Override
     public int crearCuentaEmpresa(CuentaEmpresaDTO dto) throws NegocioException {
@@ -85,5 +83,5 @@ public class CuentaEmpresaNegocio implements ICuentaEmpresaNegocio{
         dto.setIdEmpresa(entidad.getIdEmpresa());
         return dto;
     }
-    
+
 }

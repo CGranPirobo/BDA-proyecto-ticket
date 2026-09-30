@@ -1,12 +1,15 @@
 package negocio;
 
+import negocio.interfaces.IEventoNegocio;
 import Persistencias.PersistenciaException;
 import dtos.EventoDTO;
 import entidad.CuentaEmpresaEntidad;
 import entidad.EventoEntidad;
 import java.time.LocalDateTime;
-import persistencia.datos.ICuentaEmpresaDAO;
-import persistencia.datos.IEventoDAO;
+import java.util.ArrayList;
+import java.util.List;
+import persistencia.datos.interfaces.ICuentaEmpresaDAO;
+import persistencia.datos.interfaces.IEventoDAO;
 
 
 public class EventoNegocio implements IEventoNegocio{
@@ -17,6 +20,28 @@ public class EventoNegocio implements IEventoNegocio{
     public EventoNegocio(IEventoDAO eventoDAO, ICuentaEmpresaDAO cuentaDAO) {
         this.eventoDAO = eventoDAO;
         this.cuentaDAO = cuentaDAO;
+    }
+    
+    @Override
+    public List<EventoDTO> listarEventos() throws NegocioException {
+        try {
+            List<EventoDTO> listaDTO = new ArrayList<>();
+            for (EventoEntidad entidad : eventoDAO.listarEventos()) {
+                EventoDTO dto = new EventoDTO();
+                dto.setIdEvento(entidad.getIdEvento()); // Asegúrate de agregar idEvento a tu EventoDTO
+                dto.setNombre(entidad.getNombre());
+                dto.setTipo(entidad.getTipo());
+                dto.setFechaHora(entidad.getFechaHora());
+                dto.setCiudad(entidad.getCiudad());
+                dto.setEstado(entidad.getEstado());
+                dto.setCalle(entidad.getCalle());
+                dto.setEdadMinima(entidad.getEdadMinima());
+                listaDTO.add(dto);
+            }
+            return listaDTO;
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("No se pudieron cargar los eventos.", ex);
+        }
     }
     
     private EventoEntidad convertirAEntidad(EventoDTO dto) {

@@ -1,4 +1,4 @@
-package persistencia.datos;
+package persistencia.datos.interfaces;
 
 import Persistencias.PersistenciaException;
 import entidad.CuentaEmpresaEntidad;

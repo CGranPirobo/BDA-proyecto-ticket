@@ -1,5 +1,6 @@
 package persistencia.datos;
 
+import persistencia.datos.interfaces.IAdministradorDAO;
 import Persistencias.IConexion;
 import Persistencias.PersistenciaException;
 import entidad.AdministradorEntidad;

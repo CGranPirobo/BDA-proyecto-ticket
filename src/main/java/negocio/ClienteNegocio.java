@@ -4,14 +4,15 @@
  */
 package negocio;
 
+import negocio.interfaces.IClienteNegocio;
 import Persistencias.PersistenciaException;
 import dtos.ClienteDTO;
 import dtos.CrearClienteDTO;
 import dtos.LoginDTO;
 import entidad.ClienteEntidad;
 import negocio.utilidades.ValidacionCliente;
-import persistencia.datos.IAdministradorDAO;
-import persistencia.datos.IClienteDAO;
+import persistencia.datos.interfaces.IAdministradorDAO;
+import persistencia.datos.interfaces.IClienteDAO;
 
 /**
  *

@@ -1,5 +1,6 @@
 package presentacion;
 
+import dtos.ClienteDTO;
 import javax.swing.*;
 import java.awt.*;
 
@@ -7,17 +8,23 @@ public class MenuPrincipalFrame extends JFrame {
 
     private JButton btnEventos;
     private JButton btnMisBoletos;
+    private JButton btnHistorial;
+    private JButton btnSaldo;
     private JButton btnConfigurarCuenta;
     private JButton btnCerrarSesion;
 
-    public MenuPrincipalFrame() {
+    // Modifica el constructor del Menú para recibir el cliente
+    private final ClienteDTO cliente;
+
+    public MenuPrincipalFrame(ClienteDTO cliente) {
+        this.cliente = cliente;
         configurarVentana();
         inicializarComponentes();
     }
 
     private void configurarVentana() {
-        setTitle("TuTicket - Menú Principal del Cliente");
-        setSize(500, 450);
+        setTitle("TuTicket - Menú Principal");
+        setSize(500, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -25,71 +32,54 @@ public class MenuPrincipalFrame extends JFrame {
     }
 
     private void inicializarComponentes() {
-        // Título de bienvenida
         JLabel lblTitulo = new JLabel("Bienvenido a TuTicket", SwingConstants.CENTER);
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 26));
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
         add(lblTitulo, BorderLayout.NORTH);
 
-        // Panel central con un GridLayout (2 columnas x 2 filas) para los 4 botones
-        JPanel panelBotones = new JPanel(new GridLayout(2, 2, 20, 20));
+        // Grid de 3 filas x 2 columnas
+        JPanel panelBotones = new JPanel(new GridLayout(3, 2, 20, 20));
         panelBotones.setBorder(BorderFactory.createEmptyBorder(20, 40, 40, 40));
 
-        // Inicializar botones con fuentes grandes para un diseño tipo "Dashboard"
         btnEventos = new JButton("Eventos");
         btnMisBoletos = new JButton("Mis Boletos");
+        btnHistorial = new JButton("Historial de Compras");
+        btnSaldo = new JButton("Saldo de Cuenta");
         btnConfigurarCuenta = new JButton("Configurar Cuenta");
         btnCerrarSesion = new JButton("Cerrar Sesión");
 
+        JButton[] botones = {btnEventos, btnMisBoletos, btnHistorial, btnSaldo, btnConfigurarCuenta, btnCerrarSesion};
         Font fuenteBotones = new Font("Segoe UI", Font.PLAIN, 16);
-        btnEventos.setFont(fuenteBotones);
-        btnMisBoletos.setFont(fuenteBotones);
-        btnConfigurarCuenta.setFont(fuenteBotones);
-        btnCerrarSesion.setFont(fuenteBotones);
 
-        // Cambiar el cursor a una 'mano' al pasar sobre los botones
-        btnEventos.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnMisBoletos.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnConfigurarCuenta.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnCerrarSesion.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        for (JButton boton : botones) {
+            boton.setFont(fuenteBotones);
+            boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            panelBotones.add(boton);
+        }
 
-        // Asignar acciones a los botones (Planteando la estructura para el futuro)
-        btnEventos.addActionListener(e -> abrirModulo("Explorar Eventos"));
-        btnMisBoletos.addActionListener(e -> abrirModulo("Mis Boletos Comprados"));
-        btnConfigurarCuenta.addActionListener(e -> abrirModulo("Configuración de Cuenta Bancaria"));
-        
-        // Lógica real de Cerrar Sesión
+        // CORRECCIÓN: Se envía el cliente al ExplorarEventosFrame
+        btnEventos.addActionListener(e -> new ExplorarEventosFrame(cliente).setVisible(true));
+
+        btnMisBoletos.addActionListener(e -> {
+            MisBoletosFrame misBoletosFrame = new MisBoletosFrame(cliente);
+            misBoletosFrame.setVisible(true);               
+        });
+        btnHistorial.addActionListener(e -> abrirModulo("Historial de Compras"));
+        btnSaldo.addActionListener(e -> abrirModulo("Saldo de Cuenta"));
+
+        btnConfigurarCuenta.addActionListener(e -> new ConfigurarCuentaFrame(cliente).setVisible(true));
+
         btnCerrarSesion.addActionListener(e -> {
-            int confirmacion = JOptionPane.showConfirmDialog(
-                this, 
-                "¿Estás seguro de que deseas cerrar sesión?", 
-                "Cerrar Sesión", 
-                JOptionPane.YES_NO_OPTION
-            );
-            
-            if (confirmacion == JOptionPane.YES_OPTION) {
-                // Instancia la pantalla de Login y destruye el Menú Principal actual
+            if (JOptionPane.showConfirmDialog(this, "¿Cerrar sesión?", "Salir", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 new LoginFrame().setVisible(true);
                 this.dispose();
             }
         });
 
-        // Ensamblar el panel
-        panelBotones.add(btnEventos);
-        panelBotones.add(btnMisBoletos);
-        panelBotones.add(btnConfigurarCuenta);
-        panelBotones.add(btnCerrarSesion);
-
         add(panelBotones, BorderLayout.CENTER);
     }
 
-    // Método temporal para mostrar retroalimentación en los botones inactivos
-    private void abrirModulo(String nombreModulo) {
-        JOptionPane.showMessageDialog(
-            this, 
-            "El módulo '" + nombreModulo + "' está en construcción.", 
-            "Módulo en Desarrollo", 
-            JOptionPane.INFORMATION_MESSAGE
-        );
+    private void abrirModulo(String nombre) {
+        JOptionPane.showMessageDialog(this, "El módulo '" + nombre + "' está en construcción.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
     }
 }

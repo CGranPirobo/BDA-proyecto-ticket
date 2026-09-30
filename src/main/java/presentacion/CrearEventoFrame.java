@@ -32,13 +32,13 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import negocio.CuentaEmpresaNegocio;
 import negocio.EventoNegocio;
-import negocio.ICuentaEmpresaNegocio;
-import negocio.IEventoNegocio;
+import negocio.interfaces.ICuentaEmpresaNegocio;
+import negocio.interfaces.IEventoNegocio;
 import negocio.NegocioException;
 import persistencia.datos.CuentraEmpresaDAO;
 import persistencia.datos.EventoDAO;
-import persistencia.datos.ICuentaEmpresaDAO;
-import persistencia.datos.IEventoDAO;
+import persistencia.datos.interfaces.ICuentaEmpresaDAO;
+import persistencia.datos.interfaces.IEventoDAO;
 
 
 public class CrearEventoFrame extends JFrame{
@@ -261,9 +261,4 @@ public class CrearEventoFrame extends JFrame{
                     "No se pudo crear el evento", JOptionPane.WARNING_MESSAGE);
         }
     }
-    
-    
-
-    
-    
 }

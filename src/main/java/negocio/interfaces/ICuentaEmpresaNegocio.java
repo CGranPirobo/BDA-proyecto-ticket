@@ -1,7 +1,8 @@
-package negocio;
+package negocio.interfaces;
 
 import dtos.CuentaEmpresaDTO;
 import java.util.List;
+import negocio.NegocioException;
 
 
 public interface ICuentaEmpresaNegocio {

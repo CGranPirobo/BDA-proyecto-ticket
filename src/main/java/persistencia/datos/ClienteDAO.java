@@ -4,6 +4,7 @@
  */
 package persistencia.datos;
 
+import persistencia.datos.interfaces.IClienteDAO;
 import Persistencias.IConexion;
 import Persistencias.PersistenciaException;
 import entidad.ClienteEntidad;

@@ -1,10 +1,11 @@
 package negocio;
 
+import negocio.interfaces.IAdministradorNegocio;
 import Persistencias.PersistenciaException;
 import dtos.AdministradorDTO;
 import dtos.LoginDTO;
 import entidad.AdministradorEntidad;
-import persistencia.datos.IAdministradorDAO;
+import persistencia.datos.interfaces.IAdministradorDAO;
 
 public class AdministradorNegocio implements IAdministradorNegocio {
     

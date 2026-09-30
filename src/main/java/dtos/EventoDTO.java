@@ -18,6 +18,7 @@ public class EventoDTO {
     private int idAdministrador;
     private int idCuenta;
     private int idEmpresa;
+    private int idEvento;
 
     public EventoDTO(String nombre, String descripcion, int edadMinima, int cantidadMaximaBoletos, String tipo, LocalDateTime fechaHora, String calle, String colonia, String numero, String estado, String ciudad, int idAdministrador, int idCuenta, int idEmpresa) {
         this.nombre = nombre;
@@ -34,6 +35,14 @@ public class EventoDTO {
         this.idAdministrador = idAdministrador;
         this.idCuenta = idCuenta;
         this.idEmpresa = idEmpresa;
+    }
+
+    public int getIdEvento() {
+        return idEvento;
+    }
+
+    public void setIdEvento(int idEvento) {
+        this.idEvento = idEvento;
     }
 
     public EventoDTO() {

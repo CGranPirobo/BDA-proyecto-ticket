@@ -7,8 +7,8 @@ import dtos.LoginDTO;
 import dtos.ClienteDTO;
 import negocio.AdministradorNegocio;
 import negocio.ClienteNegocio;
-import negocio.IAdministradorNegocio;
-import negocio.IClienteNegocio;
+import negocio.interfaces.IAdministradorNegocio;
+import negocio.interfaces.IClienteNegocio;
 import negocio.NegocioException;
 import persistencia.datos.AdministradorDAO;
 import persistencia.datos.ClienteDAO;
@@ -27,7 +27,6 @@ public class LoginFrame extends JFrame {
     private JPasswordField txtContrasena;
     private JButton btnIngresar;
     private JButton btnRegistrarse;
-    
 
     public LoginFrame() {
         IConexion conexion = new Conexion();
@@ -75,10 +74,9 @@ public class LoginFrame extends JFrame {
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         btnIngresar = new JButton("Ingresar");
         btnRegistrarse = new JButton("Registrarse");
-       
 
         btnIngresar.addActionListener(this::btnIngresarActionPerformed);
-        btnRegistrarse.addActionListener(e -> new RegistroClienteFrame2().setVisible(true));
+        btnRegistrarse.addActionListener(e -> new RegistroClienteFrame().setVisible(true));
 
         panelBotones.add(btnRegistrarse);
         panelBotones.add(btnIngresar);
@@ -104,7 +102,7 @@ public class LoginFrame extends JFrame {
 
             // Si llega a esta línea, es un cliente válido
             JOptionPane.showMessageDialog(this, "¡Bienvenido, " + clienteLogueado.getNombre() + "!", "Login Exitoso", JOptionPane.INFORMATION_MESSAGE);
-            new MenuPrincipalFrame().setVisible(true);
+            new MenuPrincipalFrame(clienteLogueado).setVisible(true);
             this.dispose();
 
         } catch (NegocioException exCliente) {

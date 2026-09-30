@@ -31,5 +31,13 @@ public class ValidadorRegex {
 
     public static boolean esPasswordFuerte(String password) {
         return password != null && Pattern.matches(REGEX_PASSWORD, password);
+
     }
+
+    private static final String REGEX_NUMERO_CUENTA = "^\\d{10,18}$";
+
+    public static boolean esNumeroCuentaValido(String cuenta) {
+        return cuenta != null && Pattern.matches(REGEX_NUMERO_CUENTA, cuenta);
+    }
+
 }

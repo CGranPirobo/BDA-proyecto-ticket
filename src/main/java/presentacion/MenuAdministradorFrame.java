@@ -9,6 +9,7 @@ public class MenuAdministradorFrame extends JFrame {
     private JButton btnCrearEvento;
     private JButton btnConfigurarCuentas;
     private JButton btnCerrarSesion;
+    private JButton btnModificarEvento;
     private final AdministradorDTO admin;
 
     public MenuAdministradorFrame(AdministradorDTO admin) {
@@ -19,7 +20,7 @@ public class MenuAdministradorFrame extends JFrame {
 
     private void configurarVentana() {
         setTitle("TuTicket - Panel de Administración");
-        setSize(450, 350);
+        setSize(450, 430);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -43,10 +44,11 @@ public class MenuAdministradorFrame extends JFrame {
         btnCrearEvento = new JButton("Crear Nuevo Evento");
         btnConfigurarCuentas = new JButton("Configurar Cuentas Bancarias");
         btnCerrarSesion = new JButton("Cerrar Sesión");
+        btnModificarEvento = new JButton("Modificar un Evento");
 
         // Ajuste de fuentes y cursores
         Font fuenteBotones = new Font("Segoe UI", Font.PLAIN, 16);
-        JButton[] botones = {btnCrearEvento, btnConfigurarCuentas, btnCerrarSesion};
+        JButton[] botones = {btnCrearEvento, btnConfigurarCuentas, btnCerrarSesion, btnModificarEvento};
         
         for (JButton boton : botones) {
             boton.setFont(fuenteBotones);
@@ -59,6 +61,10 @@ public class MenuAdministradorFrame extends JFrame {
         btnCrearEvento.addActionListener(e -> {
             new CrearEventoFrame(admin).setVisible(true);
         });
+        
+        btnModificarEvento.addActionListener(e -> {
+            new ModificarEventoFrame(admin).setVisible(true);
+        }); 
 
         btnConfigurarCuentas.addActionListener(e -> {
            new CuentasEmpresa(admin).setVisible(true);
@@ -74,6 +80,8 @@ public class MenuAdministradorFrame extends JFrame {
 
         // Ensamblar
         panelBotones.add(btnCrearEvento);
+        panelBotones.add(Box.createRigidArea(new Dimension(0, 20))); // Espaciador
+        panelBotones.add(btnModificarEvento);
         panelBotones.add(Box.createRigidArea(new Dimension(0, 20))); // Espaciador
         panelBotones.add(btnConfigurarCuentas);
         panelBotones.add(Box.createRigidArea(new Dimension(0, 20))); // Espaciador

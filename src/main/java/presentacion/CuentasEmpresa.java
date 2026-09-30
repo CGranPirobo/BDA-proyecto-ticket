@@ -25,10 +25,10 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import negocio.CuentaEmpresaNegocio;
-import negocio.ICuentaEmpresaNegocio;
+import negocio.interfaces.ICuentaEmpresaNegocio;
 import negocio.NegocioException;
 import persistencia.datos.CuentraEmpresaDAO;
-import persistencia.datos.ICuentaEmpresaDAO;
+import persistencia.datos.interfaces.ICuentaEmpresaDAO;
 
 
 public class CuentasEmpresa extends JFrame{
