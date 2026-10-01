@@ -19,6 +19,10 @@ import java.awt.event.ActionEvent;
 
 public class LoginFrame extends JFrame {
 
+    private static final Color COLOR_NARANJA = new Color(245, 172, 45);
+    private static final Color COLOR_ROJO = new Color(237, 70, 80);
+    private static final Color COLOR_BORDE = new Color(200, 200, 200);
+    
     private final IClienteNegocio clienteNegocio;
     // 1. Variable descomentada
     private final IAdministradorNegocio administradorNegocio;
@@ -40,50 +44,159 @@ public class LoginFrame extends JFrame {
 
     private void configurarVentana() {
         setTitle("TuTicket - Iniciar Sesión");
-        setSize(350, 300);
+        setSize(420, 560);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
-        setLayout(new BorderLayout(10, 10));
+        getContentPane().setBackground(Color.WHITE);
+        setLayout(new BorderLayout());
     }
 
     private void inicializarComponentes() {
-        JPanel panelFormulario = new JPanel(new GridBagLayout());
-        panelFormulario.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JPanel panel = new JPanel(new GridBagLayout());
+    panel.setBackground(Color.WHITE);
+    panel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.gridx = 0;
+    gbc.weightx = 1;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.anchor = GridBagConstraints.WEST;
 
-        // Fila 1: Usuario
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        panelFormulario.add(new JLabel("Usuario:"), gbc);
-        gbc.gridx = 1;
-        txtUsuario = new JTextField(15);
-        panelFormulario.add(txtUsuario, gbc);
+    // Encabezado: título + icono naranja
+    JPanel encabezado = new JPanel(new BorderLayout());
+    encabezado.setOpaque(false);
+    JLabel lblTitulo = new JLabel("<html>Inicio de<br>sesion</html>");
+    lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 24));
+    encabezado.add(lblTitulo, BorderLayout.WEST);
+    encabezado.add(crearIconoUsuario(), BorderLayout.EAST);
+    gbc.gridy = 0;
+    gbc.insets = new Insets(0, 0, 25, 0);
+    panel.add(encabezado, gbc);
 
-        // Fila 2: Contraseña
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        panelFormulario.add(new JLabel("Contraseña:"), gbc);
-        gbc.gridx = 1;
-        txtContrasena = new JPasswordField(15);
-        panelFormulario.add(txtContrasena, gbc);
+    // Usuario
+    JLabel lblUsuario = new JLabel("Usuario");
+    lblUsuario.setFont(new Font("SansSerif", Font.PLAIN, 14));
+    gbc.gridy = 1;
+    gbc.insets = new Insets(0, 4, 6, 0);
+    panel.add(lblUsuario, gbc);
 
-        // Botones
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        btnIngresar = new JButton("Ingresar");
-        btnRegistrarse = new JButton("Registrarse");
+    txtUsuario = new JTextField() {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            dibujarPlaceholder(this, g, "Inserta tu usuario");
+        }
+    };
+    estilizarCampo(txtUsuario);
+    gbc.gridy = 2;
+    gbc.insets = new Insets(0, 0, 20, 0);
+    panel.add(txtUsuario, gbc);
 
-        btnIngresar.addActionListener(this::btnIngresarActionPerformed);
-        btnRegistrarse.addActionListener(e -> new RegistroClienteFrame().setVisible(true));
+    // Contraseña
+    JLabel lblContrasena = new JLabel("Contraseña");
+    lblContrasena.setFont(new Font("SansSerif", Font.PLAIN, 14));
+    gbc.gridy = 3;
+    gbc.insets = new Insets(0, 4, 6, 0);
+    panel.add(lblContrasena, gbc);
 
-        panelBotones.add(btnRegistrarse);
-        panelBotones.add(btnIngresar);
+    txtContrasena = new JPasswordField() {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            dibujarPlaceholder(this, g, "**********");
+        }
+    };
+    estilizarCampo(txtContrasena);
+    gbc.gridy = 4;
+    gbc.insets = new Insets(0, 0, 25, 0);
+    panel.add(txtContrasena, gbc);
 
-        add(panelFormulario, BorderLayout.CENTER);
-        add(panelBotones, BorderLayout.SOUTH);
+    // Botón rojo redondeado
+    btnIngresar = new JButton("Iniciar Sesion") {
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(COLOR_ROJO);
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+            g2.dispose();
+            super.paintComponent(g);
+        }
+    };
+    btnIngresar.setContentAreaFilled(false);
+    btnIngresar.setBorderPainted(false);
+    btnIngresar.setFocusPainted(false);
+    btnIngresar.setForeground(Color.WHITE);
+    btnIngresar.setFont(new Font("SansSerif", Font.PLAIN, 14));
+    btnIngresar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    btnIngresar.setPreferredSize(new Dimension(300, 42));
+    btnIngresar.addActionListener(this::btnIngresarActionPerformed);
+    gbc.gridy = 5;
+    gbc.insets = new Insets(0, 0, 25, 0);
+    panel.add(btnIngresar, gbc);
+
+    // "No tienes una cuenta? Crea una"
+    JPanel panelRegistro = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 0));
+    panelRegistro.setOpaque(false);
+    panelRegistro.add(new JLabel("No tienes una cuenta?"));
+    btnRegistrarse = new JButton("Crea una");
+    btnRegistrarse.setContentAreaFilled(false);
+    btnRegistrarse.setBorderPainted(false);
+    btnRegistrarse.setFocusPainted(false);
+    btnRegistrarse.setForeground(new Color(0, 70, 230));
+    btnRegistrarse.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    btnRegistrarse.addActionListener(e -> new RegistroClienteFrame().setVisible(true));
+    panelRegistro.add(btnRegistrarse);
+    gbc.gridy = 6;
+    gbc.insets = new Insets(0, 0, 0, 0);
+    panel.add(panelRegistro, gbc);
+
+    add(panel, BorderLayout.CENTER);
     }
+    /** Campo con borde gris redondeado y margen interno. */
+    private void estilizarCampo(JTextField campo) {
+        campo.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        campo.setPreferredSize(new Dimension(300, 42));
+        campo.setBorder(BorderFactory.createCompoundBorder(
+            new javax.swing.border.LineBorder(COLOR_BORDE, 1, true),
+            BorderFactory.createEmptyBorder(0, 14, 0, 14)));
+    }
+    
+    /** Texto gris de ayuda que se ve solo cuando el campo está vacío. */
+    private void dibujarPlaceholder(JTextField campo, Graphics g, String texto) {
+        if (campo.getText().isEmpty()) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2.setColor(Color.GRAY);
+            g2.setFont(campo.getFont());
+            Insets in = campo.getInsets();
+            int y = (campo.getHeight() + g2.getFontMetrics().getAscent() - g2.getFontMetrics().getDescent()) / 2;
+            g2.drawString(texto, in.left, y);
+            g2.dispose();
+        }
+    }
+    
+    /** Círculo naranja con la silueta de usuario. */
+    private JComponent crearIconoUsuario() {
+        return new JComponent() {
+            {
+                setPreferredSize(new Dimension(100, 100));
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(COLOR_NARANJA);
+                g2.fillOval(0, 0, 100, 100);
+                g2.setColor(Color.WHITE);
+                g2.fillOval(35, 20, 30, 30);
+                g2.fillRoundRect(27, 52, 46, 30, 16, 16);
+                g2.dispose();
+            }
+        };
+    }
+    
 
     private void btnIngresarActionPerformed(ActionEvent evt) {
         String usuario = txtUsuario.getText().trim();

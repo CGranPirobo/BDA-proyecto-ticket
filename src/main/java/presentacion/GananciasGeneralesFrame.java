@@ -18,8 +18,14 @@ import negocio.interfaces.IGananciasNegocios;
 import persistencia.datos.GananciasDAO;
 import persistencia.datos.interfaces.IGananciasDAO;
 
-
-public class GananciasGeneralesFrame extends JFrame{
+/**
+ * Ventana de interfaz gráfica para visualizar el dashboard de ganancias generales 
+ * y los fondos disponibles por cada cuenta bancaria de la empresa.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
+public class GananciasGeneralesFrame extends JFrame {
     private static final Color COLOR_FONDO = new Color(217, 217, 217);
     private static final Color COLOR_TEXTO = new Color(20, 20, 20);
     private static final Color COLOR_TEXTO_SUAVE = new Color(120, 120, 120);
@@ -38,6 +44,11 @@ public class GananciasGeneralesFrame extends JFrame{
     private JScrollPane scrollCuentas;
     private JLabel lblSinCuentas;
  
+    /**
+     * Inicializa la ventana de ganancias generales vinculada al administrador actual.
+     * 
+     * @param admin Datos del administrador autenticado.
+     */
     public GananciasGeneralesFrame(AdministradorDTO admin) {
         this.admin = admin;
  
@@ -48,8 +59,12 @@ public class GananciasGeneralesFrame extends JFrame{
         configurarVentana();
         inicializarComponentes();
         cargarDatos();
+        MenuLateraladmin.instalar(this, admin);
     }
  
+    /**
+     * Configura las propiedades principales de la ventana.
+     */
     private void configurarVentana() {
         setTitle("TuTicket - Ganancias generales");
         setSize(900, 700);
@@ -60,6 +75,9 @@ public class GananciasGeneralesFrame extends JFrame{
         setLayout(new BorderLayout());
     }
  
+    /**
+     * Inicializa y organiza los componentes visuales del dashboard, incluyendo tablas y etiquetas de control.
+     */
     private void inicializarComponentes() {
         JLabel lblTitulo = new JLabel("Dashboard ganancias generales", SwingConstants.CENTER);
         lblTitulo.setFont(FUENTE_TITULO);
@@ -72,7 +90,6 @@ public class GananciasGeneralesFrame extends JFrame{
         contenido.setLayout(new BoxLayout(contenido, BoxLayout.Y_AXIS));
         contenido.setBorder(BorderFactory.createEmptyBorder(5, 40, 25, 40));
  
-        // ----- Tabla de eventos -----
         modeloEventos = crearModelo("Evento", "Total Boletos", "Total Boletos vendidos", "Total Ingresos");
         JScrollPane scrollEventos = crearTabla(modeloEventos, true);
         scrollEventos.setPreferredSize(new Dimension(820, 250));
@@ -82,7 +99,6 @@ public class GananciasGeneralesFrame extends JFrame{
  
         contenido.add(Box.createRigidArea(new Dimension(0, 25)));
  
-        // ----- Fondos por cuenta -----
         JLabel lblFondos = new JLabel("Fondos disponibles por cuenta");
         lblFondos.setFont(FUENTE_SECCION);
         lblFondos.setForeground(COLOR_TEXTO);
@@ -108,11 +124,12 @@ public class GananciasGeneralesFrame extends JFrame{
         add(contenido, BorderLayout.CENTER);
     }
  
-    // ---------- Carga de datos ----------
- 
+    /**
+     * Consulta y carga la información de ganancias por evento y fondos por cuenta 
+     * a través de la capa de negocio, calculando totales generales.
+     */
     private void cargarDatos() {
         try {
-            // Eventos + fila de total
             List<GananciaEventoDTO> eventos = gananciasNegocio.listarGananciasPorEvento(admin.getIdEmpresa());
             for (GananciaEventoDTO g : eventos) {
                 modeloEventos.addRow(new Object[]{
@@ -127,7 +144,6 @@ public class GananciasGeneralesFrame extends JFrame{
                 modeloEventos.addRow(new Object[]{"Total", "", "", FORMATO_DINERO.format(total)});
             }
  
-            // Fondos por cuenta (el número ya llega enmascarado desde la capa de negocio)
             List<FondoCuentaDTO> cuentas = gananciasNegocio.listarFondosPorCuenta(admin.getIdEmpresa());
             for (FondoCuentaDTO c : cuentas) {
                 modeloCuentas.addRow(new Object[]{
@@ -144,8 +160,12 @@ public class GananciasGeneralesFrame extends JFrame{
         }
     }
  
-    // ---------- Utilidades de UI ----------
- 
+    /**
+     * Crea un modelo de tabla no editable con las columnas especificadas.
+     * 
+     * @param columnas Nombres de las columnas de la tabla.
+     * @return El DefaultTableModel configurado.
+     */
     private DefaultTableModel crearModelo(String... columnas) {
         return new DefaultTableModel(columnas, 0) {
             @Override
@@ -155,7 +175,14 @@ public class GananciasGeneralesFrame extends JFrame{
         };
     }
  
-    /** Tabla sin bordes, centrada y con el mismo fondo gris de la pantalla. */
+    /**
+     * Crea y estiliza un JScrollPane con su respectiva JTable personalizada 
+     * (sin bordes, con celdas centradas y formato adaptado).
+     * 
+     * @param modelo Modelo de datos para la tabla.
+     * @param ultimaFilaNegrita Indica si la última fila debe destacarse en negrita (para totales).
+     * @return JScrollPane que contiene la tabla configurada.
+     */
     private JScrollPane crearTabla(DefaultTableModel modelo, boolean ultimaFilaNegrita) {
         JTable tabla = new JTable(modelo);
         tabla.setOpaque(false);
@@ -194,7 +221,6 @@ public class GananciasGeneralesFrame extends JFrame{
             ((DefaultTableCellRenderer) encabezado.getDefaultRenderer())
                     .setHorizontalAlignment(SwingConstants.CENTER);
         }
-        // Línea fina debajo del encabezado, como en el diseño
         encabezado.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, COLOR_TEXTO));
  
         JScrollPane scroll = new JScrollPane(tabla);

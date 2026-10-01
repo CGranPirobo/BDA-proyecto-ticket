@@ -7,9 +7,6 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
@@ -18,12 +15,17 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-
-public class GananciasFrame extends JFrame{
+/**
+ * Ventana de interfaz gráfica para el panel principal (dashboard) de ganancias 
+ * y métricas financieras de las empresas administradas.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
+public class GananciasFrame extends JFrame {
     
     private static final Color COLOR_FONDO = new Color(217, 217, 217);
     private static final Color COLOR_NEGRO = new Color(10, 10, 10);
@@ -37,15 +39,23 @@ public class GananciasFrame extends JFrame{
  
     private final AdministradorDTO admin;
  
-    // Texto de la tarjeta de ganancias generales (se puede cambiar con setMensajeCuenta)
     private JLabel lblMensajeCuenta;
     
+    /**
+     * Inicializa el dashboard de ganancias vinculado al administrador actual.
+     * 
+     * @param admin Datos del administrador autenticado.
+     */
     public GananciasFrame(AdministradorDTO admin) {
         this.admin = admin;
         configurarVentana();
         inicializarComponentes();
+        MenuLateraladmin.instalar(this, admin);
     }
     
+    /**
+     * Configura las propiedades principales de la ventana.
+     */
     private void configurarVentana() {
         setTitle("TuTicket - Ganancias");
         setSize(460, 620);
@@ -56,6 +66,9 @@ public class GananciasFrame extends JFrame{
         setLayout(new BorderLayout());
     }
     
+    /**
+     * Inicializa y organiza los componentes visuales del dashboard y sus tarjetas interactivas.
+     */
     private void inicializarComponentes() {
         JLabel lblTitulo = new JLabel("Dashboard ganancias");
         lblTitulo.setFont(FUENTE_TITULO_PANTALLA);
@@ -79,7 +92,11 @@ public class GananciasFrame extends JFrame{
         add(contenido, BorderLayout.CENTER);
     }
     
-    // ---------- Tarjeta 1: ganancias por evento ----------
+    /**
+     * Crea y configura la tarjeta interactiva para consultar ganancias por evento.
+     * 
+     * @return JPanel que representa la tarjeta.
+     */
     private JPanel crearTarjetaGananciasPorEvento() {
         TarjetaRedondeada tarjeta = new TarjetaRedondeada(COLOR_NEGRO, 20);
         tarjeta.setLayout(new BorderLayout(0, 15));
@@ -108,7 +125,11 @@ public class GananciasFrame extends JFrame{
         return tarjeta;
     }
     
-     // ---------- Tarjeta 2: ganancias generales ----------
+    /**
+     * Crea y configura la tarjeta interactiva para consultar ganancias generales.
+     * 
+     * @return JPanel que representa la tarjeta.
+     */
     private JPanel crearTarjetaGananciasGenerales() {
         TarjetaRedondeada tarjeta = new TarjetaRedondeada(COLOR_TARJETA_CLARA, 20);
         tarjeta.setLayout(new BorderLayout(0, 15));
@@ -143,20 +164,36 @@ public class GananciasFrame extends JFrame{
         return tarjeta;
     }
     
-    // ---------- Acciones ----------
+    /**
+     * Abre la ventana correspondiente al desglose de ganancias por evento.
+     */
     private void abrirGananciasPorEvento() {
         new GananciasPorEventoFrame(admin).setVisible(true);
     }
     
+    /**
+     * Abre la ventana correspondiente a las ganancias generales y fondos de la empresa.
+     */
     private void abrirGananciasGenerales() {
        new GananciasGeneralesFrame(admin).setVisible(true);
     }
     
-    //Permite cambiar el texto gris de la tarjeta de ganancias generales.
+    /**
+     * Actualiza el texto descriptivo de la tarjeta de ganancias generales.
+     * 
+     * @param mensaje Nuevo texto a mostrar.
+     */
     public void setMensajeCuenta(String mensaje) {
         lblMensajeCuenta.setText(mensaje);
     }
     
+    /**
+     * Crea un elemento de lista estilizado para las tarjetas.
+     * 
+     * @param texto Texto descriptivo del item.
+     * @param color Color del texto.
+     * @return JLabel formateado.
+     */
     private JLabel crearItem(String texto, Color color) {
         JLabel lbl = new JLabel("<html><div style='width:170px'>" + texto + "</div></html>");
         lbl.setFont(FUENTE_TEXTO);
@@ -165,6 +202,13 @@ public class GananciasFrame extends JFrame{
         return lbl;
     }
  
+    /**
+     * Crea un indicador de flecha interactivo.
+     * 
+     * @param color Color de la flecha.
+     * @param alineacion Constante de alineación (SwingConstants).
+     * @return JLabel con la flecha.
+     */
     private JLabel crearFlecha(Color color, int alineacion) {
         JLabel flecha = new JLabel("\u2192", alineacion);
         flecha.setFont(FUENTE_FLECHA);
@@ -173,6 +217,12 @@ public class GananciasFrame extends JFrame{
         return flecha;
     }
  
+    /**
+     * Configura las dimensiones estándar de las tarjetas.
+     * 
+     * @param tarjeta Componente de tarjeta.
+     * @param alto Altura deseada.
+     */
     private void tamanoTarjeta(JComponent tarjeta, int alto) {
         Dimension d = new Dimension(Integer.MAX_VALUE, alto);
         tarjeta.setPreferredSize(new Dimension(300, alto));
@@ -180,6 +230,12 @@ public class GananciasFrame extends JFrame{
         tarjeta.setAlignmentX(Component.LEFT_ALIGNMENT);
     }
     
+    /**
+     * Añade un evento de escucha para hacer interactivo y clickeable un componente.
+     * 
+     * @param tarjeta Componente contenedor.
+     * @param accion Acción a ejecutar al hacer clic.
+     */
     private void hacerClickeable(JComponent tarjeta, Runnable accion) {
         tarjeta.setCursor(new Cursor(Cursor.HAND_CURSOR));
         tarjeta.addMouseListener(new MouseAdapter() {
@@ -190,7 +246,9 @@ public class GananciasFrame extends JFrame{
         });
     }
     
-    // Panel con esquinas redondeadas y una sombra ligera.
+    /**
+     * Clase interna que define un panel con esquinas redondeadas.
+     */
     private static class TarjetaRedondeada extends JPanel {
         private final Color fondo;
         private final int radio;
@@ -201,5 +259,4 @@ public class GananciasFrame extends JFrame{
             setOpaque(false);
         }
     }
-    
 }

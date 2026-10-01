@@ -46,12 +46,13 @@ public class SeleccionAsientosFrame extends JFrame {
         this.cliente = cliente;
         this.evento = evento;
         this.boletosSeleccionados = new ArrayList<>();
-        
+
         // --- CARGAR ASIENTOS OCUPADOS ---
         this.asientosOcupadosEnBD = new CompraDAO(new Conexion()).obtenerAsientosOcupados(evento.getIdEvento());
-        
+
         configurarVentana();
         inicializarComponentes();
+        MenuLateralCliente.instalar(this, cliente);
     }
 
     private void configurarVentana() {
@@ -147,10 +148,12 @@ public class SeleccionAsientosFrame extends JFrame {
 
     private void manejarClickAsiento(JToggleButton btn, String fila, int numero) {
         if (btn.isSelected()) {
-            if (boletosSeleccionados.size() >= MAX_BOLETOS) {
+            int limiteReal = Math.min(MAX_BOLETOS, evento.getBoletosRestantes());
+
+            if (boletosSeleccionados.size() >= limiteReal) {
                 btn.setSelected(false);
                 JOptionPane.showMessageDialog(this,
-                        "Límite de boletos alcanzado. Has alcanzado el límite de " + MAX_BOLETOS + " boletos para este evento.",
+                        "Límite alcanzado. Solo puedes seleccionar hasta " + limiteReal + " boleto(s) para este evento.",
                         "Límite excedido", JOptionPane.WARNING_MESSAGE);
                 return;
             }

@@ -41,13 +41,14 @@ import persistencia.datos.CompraDAO;
  *
  * @author gaelc
  */
-public class MisBoletosFrame extends JFrame{
-    
+public class MisBoletosFrame extends JFrame {
+
     private static final DateTimeFormatter FORMATO_FECHA
             = DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a", Locale.of("es", "MX"));
     private static final String[] COLUMNAS = {
-        "Nombre", "Precio", "Sección", "Fila", "Asiento", "Fecha de Compra", "Estatus", ""};
+        "Nombre", "Precio", "Secci n", "Fila", "Asiento", "Fecha de Compra", "Estatus", "Acciones", "Generar PDF"};
     private static final int COL_ACCION = 7;
+    private static final int COL_PDF = 8;
     private static final Color ROJO = new Color(239, 68, 68);
     private static final Color GRIS = new Color(90, 90, 90);
     private static final Color FONDO = new Color(217, 217, 217);
@@ -65,6 +66,7 @@ public class MisBoletosFrame extends JFrame{
         configurarVentana();
         inicializarComponentes();
         cargarBoletos();
+        MenuLateralCliente.instalar(this, cliente);
     }
 
     private void configurarVentana() {
@@ -93,8 +95,7 @@ public class MisBoletosFrame extends JFrame{
         modeloTabla = new DefaultTableModel(COLUMNAS, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Solo el botón de la última columna, y solo si todavía se puede cancelar
-                return column == COL_ACCION && puedeCancelar(boletos.get(row));
+                return (column == COL_ACCION && puedeCancelar(boletos.get(row))) || column == COL_PDF;
             }
         };
         tablaBoletos = new JTable(modeloTabla);
@@ -112,14 +113,77 @@ public class MisBoletosFrame extends JFrame{
 
     private void configurarColumnas() {
         CeldaTexto celdaTexto = new CeldaTexto();
-        for (int i = 0; i < COL_ACCION; i++) {
+        for (int i = 0; i <= 6; i++) {
             tablaBoletos.getColumnModel().getColumn(i).setCellRenderer(celdaTexto);
         }
         tablaBoletos.getColumnModel().getColumn(0).setPreferredWidth(130);
         tablaBoletos.getColumnModel().getColumn(5).setPreferredWidth(140);
+
+        // Columna Cancelar
         tablaBoletos.getColumnModel().getColumn(COL_ACCION).setPreferredWidth(130);
         tablaBoletos.getColumnModel().getColumn(COL_ACCION).setCellRenderer(new BotonRenderer());
         tablaBoletos.getColumnModel().getColumn(COL_ACCION).setCellEditor(new BotonEditor());
+
+        // Columna PDF
+        tablaBoletos.getColumnModel().getColumn(COL_PDF).setPreferredWidth(100);
+        tablaBoletos.getColumnModel().getColumn(COL_PDF).setCellRenderer(new BotonPdfRenderer());
+        tablaBoletos.getColumnModel().getColumn(COL_PDF).setCellEditor(new BotonPdfEditor());
+    }
+    
+    // --- LOGICA PARA BOTON PDF ---
+   private void configurarBotonPdf(JButton boton) {
+        boton.setText("PDF");
+        boton.setBackground(new Color(239, 68, 68));
+        boton.setForeground(Color.WHITE);
+        boton.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        boton.setOpaque(true);
+        boton.setBorderPainted(false);
+        boton.setFocusPainted(false);
+    }
+
+    private void generarYMostrarPDF(BoletoCompradoDTO boleto) {
+        try {
+            String ruta = negocio.utilidades.GeneradorBoletoPDF.generar(boleto);
+            
+            int resp = JOptionPane.showConfirmDialog(this, 
+                "PDF generado correctamente en:\n" + ruta + "\n\n Desea abrirlo ahora?", 
+                "Boleto Generado", JOptionPane.YES_NO_OPTION);
+                
+            if (resp == JOptionPane.YES_OPTION) {
+                java.awt.Desktop.getDesktop().open(new java.io.File(ruta));
+            }
+        } catch (Exception ex) {
+            mostrarError("Error al generar el PDF: " + ex.getMessage());
+        }
+    }
+
+    private class BotonPdfRenderer implements TableCellRenderer {
+        private final JButton boton = new JButton();
+        @Override
+        public Component getTableCellRendererComponent(JTable t, Object v, boolean sel, boolean foc, int r, int c) {
+            configurarBotonPdf(boton);
+            return boton;
+        }
+    }
+
+    private class BotonPdfEditor extends AbstractCellEditor implements TableCellEditor {
+        private final JButton boton = new JButton();
+        private int filaActual;
+        BotonPdfEditor() {
+            boton.addActionListener(e -> {
+                BoletoCompradoDTO b = boletos.get(filaActual);
+                fireEditingStopped();
+                generarYMostrarPDF(b);
+            });
+        }
+        @Override
+        public Component getTableCellEditorComponent(JTable t, Object v, boolean sel, int r, int c) {
+            filaActual = r;
+            configurarBotonPdf(boton);
+            return boton;
+        }
+        @Override
+        public Object getCellEditorValue() { return ""; }
     }
 
     private JPanel crearPanelInferior() {
@@ -151,7 +215,7 @@ public class MisBoletosFrame extends JFrame{
             b.getAsiento(),
             b.getFechaCompra() != null ? b.getFechaCompra().format(FORMATO_FECHA) : "",
             capitalizar(b.getEstatus()),
-            ""
+            "", "" // Dos botones
         };
     }
 
@@ -170,7 +234,10 @@ public class MisBoletosFrame extends JFrame{
         JOptionPane.showMessageDialog(this, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
-    /** Solo se puede cancelar un boleto "comprado" dentro de las 24 horas desde la compra. */
+    /**
+     * Solo se puede cancelar un boleto "comprado" dentro de las 24 horas desde
+     * la compra.
+     */
     private boolean puedeCancelar(BoletoCompradoDTO b) {
         return "comprado".equalsIgnoreCase(b.getEstatus())
                 && b.getFechaCompra() != null
@@ -190,15 +257,15 @@ public class MisBoletosFrame extends JFrame{
 
     private void confirmarCancelacion(BoletoCompradoDTO b) {
         setEnabled(false); // mientras la pantalla de cancelación está abierta, esta se bloquea
-    CancelarBoletoFrame pantalla = new CancelarBoletoFrame(this, b, () -> cancelarBoleto(b));
-    pantalla.addWindowListener(new WindowAdapter() {
-        @Override
-        public void windowClosed(WindowEvent e) {
-            setEnabled(true); // al cerrarse (confirmando o no), se vuelve a activar
-            toFront();
-        }
-    });
-    pantalla.setVisible(true);
+        CancelarBoletoFrame pantalla = new CancelarBoletoFrame(this, b, () -> cancelarBoleto(b));
+        pantalla.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                setEnabled(true); // al cerrarse (confirmando o no), se vuelve a activar
+                toFront();
+            }
+        });
+        pantalla.setVisible(true);
     }
 
     private void cancelarBoleto(BoletoCompradoDTO b) {
@@ -266,4 +333,6 @@ public class MisBoletosFrame extends JFrame{
         }
     }
     
+    
+
 }

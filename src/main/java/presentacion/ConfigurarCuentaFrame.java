@@ -10,6 +10,13 @@ import negocio.NegocioException;
 import negocio.interfaces.ICuentaPersonalNegocio;
 import persistencia.datos.CuentaPersonalDAO;
 
+/**
+ * Ventana de interfaz gráfica para el registro y vinculación de nuevas 
+ * cuentas bancarias personales asociadas a un cliente.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class ConfigurarCuentaFrame extends JFrame {
 
     private final ClienteDTO cliente;
@@ -20,13 +27,22 @@ public class ConfigurarCuentaFrame extends JFrame {
     private JTextField txtSaldo;
     private JButton btnVincular;
 
+    /**
+     * Inicializa la ventana de configuración vinculada al cliente actual.
+     * 
+     * @param cliente Datos del cliente en sesión.
+     */
     public ConfigurarCuentaFrame(ClienteDTO cliente) {
         this.cliente = cliente;
         this.cuentaNegocio = new CuentaPersonalNegocio(new CuentaPersonalDAO(new Conexion()));
         configurarVentana();
         inicializarComponentes();
+        MenuLateralCliente.instalar(this, cliente);
     }
 
+    /**
+     * Configura las propiedades de la ventana del formulario.
+     */
     private void configurarVentana() {
         setTitle("Configurar cuenta bancaria");
         setSize(450, 450);
@@ -34,17 +50,18 @@ public class ConfigurarCuentaFrame extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
         setLayout(new BorderLayout());
-        getContentPane().setBackground(new Color(230, 230, 230)); // Fondo gris claro del boceto
+        getContentPane().setBackground(new Color(230, 230, 230));
     }
 
+    /**
+     * Inicializa y organiza los componentes del formulario para ingresar datos bancarios.
+     */
     private void inicializarComponentes() {
-        // Título principal
         JLabel lblTitulo = new JLabel("Inserta la informacion de tu Cuenta", SwingConstants.CENTER);
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(30, 0, 20, 0));
         add(lblTitulo, BorderLayout.NORTH);
 
-        // Panel del formulario
         JPanel panelFormulario = new JPanel(new GridBagLayout());
         panelFormulario.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
@@ -54,7 +71,6 @@ public class ConfigurarCuentaFrame extends JFrame {
 
         Font fuenteLabel = new Font("Segoe UI", Font.BOLD, 12);
 
-        // Campo: Banco
         gbc.gridx = 0;
         gbc.gridy = 0;
         JLabel lblBanco = new JLabel("Indique Su Banco");
@@ -66,7 +82,6 @@ public class ConfigurarCuentaFrame extends JFrame {
         txtBanco.setPreferredSize(new Dimension(300, 35));
         panelFormulario.add(txtBanco, gbc);
 
-        // Campo: Número de cuenta
         gbc.gridy = 2;
         JLabel lblNumero = new JLabel("Numero de cuenta");
         lblNumero.setFont(fuenteLabel);
@@ -77,7 +92,6 @@ public class ConfigurarCuentaFrame extends JFrame {
         txtNumeroCuenta.setPreferredSize(new Dimension(300, 35));
         panelFormulario.add(txtNumeroCuenta, gbc);
 
-        // Campo: Saldo
         gbc.gridy = 4;
         JLabel lblSaldo = new JLabel("Saldo Disponible");
         lblSaldo.setFont(fuenteLabel);
@@ -90,7 +104,6 @@ public class ConfigurarCuentaFrame extends JFrame {
 
         add(panelFormulario, BorderLayout.CENTER);
 
-        // Panel inferior con el botón negro
         JPanel panelSur = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelSur.setOpaque(false);
         panelSur.setBorder(BorderFactory.createEmptyBorder(10, 0, 40, 0));
@@ -109,6 +122,10 @@ public class ConfigurarCuentaFrame extends JFrame {
         add(panelSur, BorderLayout.SOUTH);
     }
 
+    /**
+     * Valida los campos del formulario, procesa el registro de la cuenta a través de la capa de negocio
+     * y maneja las notificaciones de éxito o error.
+     */
     private void vincularCuenta() {
         String banco = txtBanco.getText().trim();
         String numero = txtNumeroCuenta.getText().trim();
@@ -124,7 +141,6 @@ public class ConfigurarCuentaFrame extends JFrame {
 
             CuentaPersonalDTO dto = new CuentaPersonalDTO(banco, numero, saldo, cliente.getIdCliente());
 
-            // Esto disparará las validaciones
             cuentaNegocio.registrarCuenta(dto);
 
             Object[] opciones = {"Continuar"};
@@ -146,10 +162,8 @@ public class ConfigurarCuentaFrame extends JFrame {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "El saldo debe ser un valor numérico válido (ej. 1500.50).", "Error de formato", JOptionPane.ERROR_MESSAGE);
         } catch (NegocioException ex) {
-            // AQUÍ ATRAPAMOS LOS ERRORES DE REGEX (ej. "El banco solo debe contener letras")
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Alerta de Validación", JOptionPane.WARNING_MESSAGE);
         } catch (Exception ex) {
-            // Este se queda como red de seguridad para errores críticos del sistema (caída de BD, etc.)
             JOptionPane.showMessageDialog(this, "Ocurrió un error inesperado al vincular la cuenta.", "Error Crítico", JOptionPane.ERROR_MESSAGE);
         }
     }

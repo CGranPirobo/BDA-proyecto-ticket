@@ -4,7 +4,6 @@ import Persistencias.Conexion;
 import Persistencias.IConexion;
 import dtos.AdministradorDTO;
 import dtos.CuentaEmpresaDTO;
-import static java.awt.AWTEventMulticaster.add;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
@@ -30,8 +29,14 @@ import negocio.NegocioException;
 import persistencia.datos.CuentraEmpresaDAO;
 import persistencia.datos.interfaces.ICuentaEmpresaDAO;
 
-
-public class CuentasEmpresa extends JFrame{
+/**
+ * Ventana de interfaz gráfica para la gestión y registro de cuentas bancarias 
+ * corporativas asociadas a la empresa del administrador.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
+public class CuentasEmpresa extends JFrame {
     
     private final AdministradorDTO admin;
     private final ICuentaEmpresaNegocio cuentaNegocio;
@@ -43,6 +48,11 @@ public class CuentasEmpresa extends JFrame{
     private JTable tablaCuentas;
     private DefaultTableModel modeloTabla;
  
+    /**
+     * Inicializa la ventana de cuentas de empresa con los datos del administrador en sesión.
+     * 
+     * @param admin Datos del administrador autenticado.
+     */
     public CuentasEmpresa(AdministradorDTO admin) {
         this.admin = admin;
  
@@ -53,8 +63,12 @@ public class CuentasEmpresa extends JFrame{
         configurarVentana();
         inicializarComponentes();
         cargarCuentas();
+        MenuLateraladmin.instalar(this, admin);
     }
  
+    /**
+     * Configura las propiedades de visualización y cierre de la ventana.
+     */
     private void configurarVentana() {
         setTitle("TuTicket - Cuentas Bancarias de la Empresa");
         setSize(560, 480);
@@ -64,13 +78,15 @@ public class CuentasEmpresa extends JFrame{
         setLayout(new BorderLayout(10, 10));
     }
  
+    /**
+     * Inicializa los componentes visuales del formulario de registro y la tabla de cuentas registradas.
+     */
     private void inicializarComponentes() {
         JLabel lblTitulo = new JLabel("Cuentas Bancarias", SwingConstants.CENTER);
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(15, 0, 5, 0));
         add(lblTitulo, BorderLayout.NORTH);
  
-        // Formulario para agregar una cuenta nueva
         txtNoCuenta = new JTextField(18);
         txtBanco = new JTextField(18);
         btnGuardar = new JButton("Guardar cuenta");
@@ -104,11 +120,10 @@ public class CuentasEmpresa extends JFrame{
         gbc.anchor = GridBagConstraints.EAST;
         form.add(btnGuardar, gbc);
  
-        // Tabla con las cuentas de la empresa
         modeloTabla = new DefaultTableModel(new String[]{"ID", "Número de cuenta", "Banco", "Saldo"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // la tabla es solo de lectura
+                return false; 
             }
         };
         tablaCuentas = new JTable(modeloTabla);
@@ -122,7 +137,6 @@ public class CuentasEmpresa extends JFrame{
         centro.add(scroll, BorderLayout.CENTER);
         add(centro, BorderLayout.CENTER);
  
-        // Botón inferior
         btnCerrar = new JButton("Cerrar");
         btnCerrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnCerrar.addActionListener(e -> dispose());
@@ -131,10 +145,13 @@ public class CuentasEmpresa extends JFrame{
         add(sur, BorderLayout.SOUTH);
     }
  
+    /**
+     * Carga y actualiza el listado de cuentas bancarias asociadas a la empresa en la tabla.
+     */
     private void cargarCuentas() {
         try {
             List<CuentaEmpresaDTO> cuentas = cuentaNegocio.listarCuentas(admin.getIdEmpresa());
-            modeloTabla.setRowCount(0); // limpia la tabla antes de llenarla
+            modeloTabla.setRowCount(0); 
             for (CuentaEmpresaDTO c : cuentas) {
                 modeloTabla.addRow(new Object[]{
                     c.getIdCuenta(),
@@ -149,6 +166,9 @@ public class CuentasEmpresa extends JFrame{
         }
     }
  
+    /**
+     * Valida y procesa el registro de una nueva cuenta bancaria empresarial a través del negocio.
+     */
     private void guardar() {
         try {
             CuentaEmpresaDTO dto = new CuentaEmpresaDTO();
@@ -169,5 +189,4 @@ public class CuentasEmpresa extends JFrame{
                     "No se pudo registrar la cuenta", JOptionPane.WARNING_MESSAGE);
         }
     }
-    
 }

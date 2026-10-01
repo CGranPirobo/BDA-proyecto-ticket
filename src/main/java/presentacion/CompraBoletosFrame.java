@@ -17,6 +17,13 @@ import negocio.interfaces.ICuentaPersonalNegocio;
 import persistencia.datos.CuentaPersonalDAO;
 import persistencia.datos.CompraDAO;
 
+/**
+ * Ventana de interfaz gráfica para gestionar el proceso de compra de boletos, 
+ * seleccionando cuentas bancarias personales vinculadas y procesando la transacción de pago.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class CompraBoletosFrame extends JFrame {
 
     private List<CuentaPersonalDTO> listaCuentasUsuario;
@@ -27,14 +34,25 @@ public class CompraBoletosFrame extends JFrame {
 
     private JComboBox<String> cmbCuentasGuardadas;
 
+    /**
+     * Inicializa la ventana de compra con los datos del cliente, el evento y los asientos seleccionados.
+     * 
+     * @param cliente Datos del cliente que realiza la compra.
+     * @param evento Datos del evento al que corresponden los boletos.
+     * @param boletos Lista de los asientos seleccionados.
+     */
     public CompraBoletosFrame(ClienteDTO cliente, EventoDTO evento, List<BoletoSeleccionadoDTO> boletos) {
         this.cliente = cliente;
         this.evento = evento;
         this.boletos = boletos;
         configurarVentana();
         inicializarComponentes();
+        MenuLateralCliente.instalar(this, cliente);
     }
 
+    /**
+     * Configura las propiedades principales de la ventana (tamaño, cierre y color de fondo).
+     */
     private void configurarVentana() {
         setTitle("Compra de boletos");
         setSize(500, 700);
@@ -45,8 +63,10 @@ public class CompraBoletosFrame extends JFrame {
         getContentPane().setBackground(new Color(230, 230, 230));
     }
 
+    /**
+     * Inicializa y organiza los componentes visuales del formulario de compra y selección de métodos de pago.
+     */
     private void inicializarComponentes() {
-        // Título superior negro
         JLabel lblTitulo = new JLabel("Compra de boletos", SwingConstants.CENTER);
         lblTitulo.setOpaque(true);
         lblTitulo.setBackground(Color.BLACK);
@@ -55,13 +75,11 @@ public class CompraBoletosFrame extends JFrame {
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
         add(lblTitulo, BorderLayout.NORTH);
 
-        // Contenedor principal con un poco más de margen
         JPanel panelCentral = new JPanel();
         panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
         panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
         panelCentral.setOpaque(false);
 
-        // Sección: Detalles de la compra alineado a la izquierda
         JPanel pnlSubtitulo = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         pnlSubtitulo.setOpaque(false);
         JLabel lblSubtitulo = new JLabel("Detalles de la compra");
@@ -70,7 +88,6 @@ public class CompraBoletosFrame extends JFrame {
         panelCentral.add(pnlSubtitulo);
         panelCentral.add(Box.createRigidArea(new Dimension(0, 15)));
 
-        // Listado dinámico de boletos con salto de línea (HTML)
         for (BoletoSeleccionadoDTO b : boletos) {
             JPanel filaBoleto = new JPanel(new BorderLayout(10, 0));
             filaBoleto.setOpaque(false);
@@ -94,7 +111,6 @@ public class CompraBoletosFrame extends JFrame {
             precioFinal += b.getPrecio();
         }
 
-        // Totales
         JPanel panelTotales = new JPanel(new GridLayout(2, 2, 10, 15));
         panelTotales.setOpaque(false);
         panelTotales.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
@@ -128,7 +144,6 @@ public class CompraBoletosFrame extends JFrame {
 
         panelCentral.add(panelTotales);
 
-        // Botón Realizar Compra alineado a la derecha
         JPanel panelBtnCompra = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         panelBtnCompra.setOpaque(false);
         JButton btnRealizarCompra = new JButton("Realizar compra");
@@ -142,7 +157,6 @@ public class CompraBoletosFrame extends JFrame {
         panelCentral.add(panelBtnCompra);
         panelCentral.add(Box.createRigidArea(new Dimension(0, 25)));
 
-        // Sección: Método de Pago
         JPanel pnlMetodo = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         pnlMetodo.setOpaque(false);
         JLabel lblMetodo = new JLabel("<html>Selecciona un método<br>de pago</html>");
@@ -151,7 +165,6 @@ public class CompraBoletosFrame extends JFrame {
         panelCentral.add(pnlMetodo);
         panelCentral.add(Box.createRigidArea(new Dimension(0, 15)));
 
-        // JComboBox para seleccionar cuenta existente
         JPanel panelCuenta = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         panelCuenta.setOpaque(false);
 
@@ -159,17 +172,15 @@ public class CompraBoletosFrame extends JFrame {
         cmbCuentasGuardadas.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         cmbCuentasGuardadas.setPreferredSize(new Dimension(300, 35));
 
-        // Llamamos al nuevo método para cargar los datos por primera vez
         cargarCuentas();
 
         panelCuenta.add(cmbCuentasGuardadas);
         panelCentral.add(panelCuenta);
         panelCentral.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        // Botón de nueva cuenta con Listener de Ventana
         JPanel panelNuevaCuenta = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         panelNuevaCuenta.setOpaque(false);
-        JButton btnNuevaCuenta = new JButton("Nueva cuenta   →");
+        JButton btnNuevaCuenta = new JButton("Nueva cuenta    →");
         btnNuevaCuenta.setContentAreaFilled(false);
         btnNuevaCuenta.setBorderPainted(false);
         btnNuevaCuenta.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -178,7 +189,6 @@ public class CompraBoletosFrame extends JFrame {
         btnNuevaCuenta.addActionListener(e -> {
             ConfigurarCuentaFrame ventanaConfigurar = new ConfigurarCuentaFrame(cliente);
             
-            // Este Listener detecta cuando la ventana hija se cierra para recargar el ComboBox
             ventanaConfigurar.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent we) {
@@ -195,9 +205,11 @@ public class CompraBoletosFrame extends JFrame {
         add(panelCentral, BorderLayout.CENTER);
     }
 
-    // --- NUEVO MÉTODO PARA RECARGAR EL COMBOBOX ---
+    /**
+     * Carga y actualiza las cuentas bancarias personales asociadas al cliente en el ComboBox.
+     */
     private void cargarCuentas() {
-        cmbCuentasGuardadas.removeAllItems(); // Limpia los datos viejos
+        cmbCuentasGuardadas.removeAllItems(); 
         cmbCuentasGuardadas.addItem("Seleccione una cuenta...");
 
         try {
@@ -213,10 +225,13 @@ public class CompraBoletosFrame extends JFrame {
                 cmbCuentasGuardadas.addItem(cuenta.getBanco() + " - Terminación " + terminacion);
             }
         } catch (Exception ex) {
-            System.out.println("No se pudieron cargar las cuentas: " + ex.getMessage());
+            System.err.println("No se pudieron cargar las cuentas: " + ex.getMessage());
         }
     }
 
+    /**
+     * Valida la selección de cuenta y procesa la transacción de compra mediante el DAO correspondiente.
+     */
     private void procesarCompra() {
         int indexSeleccionado = cmbCuentasGuardadas.getSelectedIndex();
         if (indexSeleccionado <= 0) {
@@ -224,7 +239,6 @@ public class CompraBoletosFrame extends JFrame {
             return;
         }
 
-        // Recuperar el ID exacto de la cuenta (restamos 1 porque el índice 0 es "Seleccione...")
         int idCuenta = listaCuentasUsuario.get(indexSeleccionado - 1).getIdCuentaPersonal();
 
         try {
@@ -237,6 +251,9 @@ public class CompraBoletosFrame extends JFrame {
         }
     }
 
+    /**
+     * Muestra una ventana de diálogo emergente confirmando el éxito de la compra de boletos.
+     */
     private void mostrarConfirmacion() {
         JDialog dialogConfirmacion = new JDialog(this, "Confirmación", true);
         dialogConfirmacion.setSize(350, 300);
