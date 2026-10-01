@@ -1,22 +1,29 @@
 package dtos;
 
-
+/**
+ * Objeto de transferencia de datos (DTO) que representa la información 
+ * financiera y bancaria vinculada a una empresa.
+ * Se utiliza para consultar o transportar los datos de la cuenta donde 
+ * la empresa recibe o gestiona sus fondos.
+ * 
+ * @author gaelc
+ */
 public class CuentaEmpresaDTO {
-    
+
     private int idCuenta;
-    private String NumeroCuenta;
-    private int Saldo;
-    private String Banco;
+    private String numeroCuenta;
+    private double saldo;
+    private String banco;
     private int idEmpresa;
 
     public CuentaEmpresaDTO() {
     }
 
-    public CuentaEmpresaDTO(int idCuenta, String NumeroCuenta, int Saldo, String Banco, int idEmpresa) {
+    public CuentaEmpresaDTO(int idCuenta, String numeroCuenta, double saldo, String banco, int idEmpresa) {
         this.idCuenta = idCuenta;
-        this.NumeroCuenta = NumeroCuenta;
-        this.Saldo = Saldo;
-        this.Banco = Banco;
+        this.numeroCuenta = numeroCuenta;
+        this.saldo = saldo;
+        this.banco = banco;
         this.idEmpresa = idEmpresa;
     }
 
@@ -29,27 +36,27 @@ public class CuentaEmpresaDTO {
     }
 
     public String getNumeroCuenta() {
-        return NumeroCuenta;
+        return numeroCuenta;
     }
 
-    public void setNumeroCuenta(String NumeroCuenta) {
-        this.NumeroCuenta = NumeroCuenta;
+    public void setNumeroCuenta(String numeroCuenta) {
+        this.numeroCuenta = numeroCuenta;
     }
 
-    public int getSaldo() {
-        return Saldo;
+    public double getSaldo() {
+        return saldo;
     }
 
-    public void setSaldo(int Saldo) {
-        this.Saldo = Saldo;
+    public void setSaldo(double saldo) {
+        this.saldo = saldo;
     }
 
     public String getBanco() {
-        return Banco;
+        return banco;
     }
 
-    public void setBanco(String Banco) {
-        this.Banco = Banco;
+    public void setBanco(String banco) {
+        this.banco = banco;
     }
 
     public int getIdEmpresa() {
@@ -59,6 +66,4 @@ public class CuentaEmpresaDTO {
     public void setIdEmpresa(int idEmpresa) {
         this.idEmpresa = idEmpresa;
     }
-    
-    
 }

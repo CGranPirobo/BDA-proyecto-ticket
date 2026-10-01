@@ -1,5 +1,14 @@
 package entidad;
 
+/**
+ * Entidad de dominio que representa a un administrador de eventos dentro del sistema.
+ * Esta clase mapea directamente la estructura de la base de datos, conteniendo 
+ * la información personal, las credenciales de acceso y el identificador de la 
+ * empresa a la que pertenece el administrador.
+ * 
+ * @author M-14
+ * @author gaelc
+ */
 public class AdministradorEntidad {
     
     private int idAdministrador;

@@ -47,7 +47,7 @@ public class CompraBoletosFrame extends JFrame {
         this.boletos = boletos;
         configurarVentana();
         inicializarComponentes();
-        MenuLateralCliente.instalar(this, cliente);
+        //MenuLateralCliente.instalar(this, cliente);
     }
 
     /**

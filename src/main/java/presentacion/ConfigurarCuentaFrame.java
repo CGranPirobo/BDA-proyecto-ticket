@@ -138,15 +138,13 @@ public class ConfigurarCuentaFrame extends JFrame {
 
         try {
             double saldo = Double.parseDouble(saldoStr);
-
             CuentaPersonalDTO dto = new CuentaPersonalDTO(banco, numero, saldo, cliente.getIdCliente());
-
             cuentaNegocio.registrarCuenta(dto);
 
             Object[] opciones = {"Continuar"};
             int seleccion = JOptionPane.showOptionDialog(
                     this,
-                    "Cuenta registrada exitosamente.\n✅",
+                    "Cuenta registrada exitosamente.\n",
                     "Cuenta Registrada",
                     JOptionPane.DEFAULT_OPTION,
                     JOptionPane.INFORMATION_MESSAGE,
@@ -156,7 +154,10 @@ public class ConfigurarCuentaFrame extends JFrame {
             );
 
             if (seleccion == 0 || seleccion == JOptionPane.CLOSED_OPTION) {
-                this.dispose();
+                
+                txtBanco.setText("");
+                txtNumeroCuenta.setText("");
+                txtSaldo.setText("");
             }
 
         } catch (NumberFormatException ex) {

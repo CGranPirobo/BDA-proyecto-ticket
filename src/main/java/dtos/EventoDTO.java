@@ -1,9 +1,20 @@
 package dtos;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-
+/**
+ * Objeto de transferencia de datos (DTO) que encapsula la información 
+ * principal de un evento dentro del sistema de boletaje.
+ * Facilita el transporte de datos que definen el evento, su ubicación, 
+ * capacidad, administrador responsable y las cuentas asociadas a él.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class EventoDTO {
+
     private String nombre;
     private String descripcion;
     private int edadMinima;
@@ -16,11 +27,15 @@ public class EventoDTO {
     private String estado;
     private String ciudad;
     private int idAdministrador;
-    private int idCuenta;
-    private int idEmpresa;
     private int idEvento;
+    private int idEmpresa;
+    private int boletosRestantes;
+    private List<Integer> idsCuentas = new ArrayList<>();
 
-    public EventoDTO(String nombre, String descripcion, int edadMinima, int cantidadMaximaBoletos, String tipo, LocalDateTime fechaHora, String calle, String colonia, String numero, String estado, String ciudad, int idAdministrador, int idCuenta, int idEmpresa) {
+    public EventoDTO() {
+    }
+
+    public EventoDTO(String nombre, String descripcion, int edadMinima, int cantidadMaximaBoletos, String tipo, LocalDateTime fechaHora, String calle, String colonia, String numero, String estado, String ciudad, int idAdministrador, int idEmpresa) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.edadMinima = edadMinima;
@@ -33,35 +48,7 @@ public class EventoDTO {
         this.estado = estado;
         this.ciudad = ciudad;
         this.idAdministrador = idAdministrador;
-        this.idCuenta = idCuenta;
         this.idEmpresa = idEmpresa;
-    }
-
-    public int getIdEvento() {
-        return idEvento;
-    }
-
-    public void setIdEvento(int idEvento) {
-        this.idEvento = idEvento;
-    }
-
-    public EventoDTO() {
-    }
-
-    public int getIdEmpresa() {
-        return idEmpresa;
-    }
-
-    public void setIdEmpresa(int idEmpresa) {
-        this.idEmpresa = idEmpresa;
-    }
-
-    public int getIdCuenta() {
-        return idCuenta;
-    }
-
-    public void setIdCuenta(int idCuenta) {
-        this.idCuenta = idCuenta;
     }
 
     public String getNombre() {
@@ -159,6 +146,36 @@ public class EventoDTO {
     public void setIdAdministrador(int idAdministrador) {
         this.idAdministrador = idAdministrador;
     }
-    
-    
+
+    public int getIdEvento() {
+        return idEvento;
+    }
+
+    public void setIdEvento(int idEvento) {
+        this.idEvento = idEvento;
+    }
+
+    public int getIdEmpresa() {
+        return idEmpresa;
+    }
+
+    public void setIdEmpresa(int idEmpresa) {
+        this.idEmpresa = idEmpresa;
+    }
+
+    public int getBoletosRestantes() {
+        return boletosRestantes;
+    }
+
+    public void setBoletosRestantes(int boletosRestantes) {
+        this.boletosRestantes = boletosRestantes;
+    }
+
+    public List<Integer> getIdsCuentas() {
+        return idsCuentas;
+    }
+
+    public void setIdsCuentas(List<Integer> idsCuentas) {
+        this.idsCuentas = idsCuentas;
+    }
 }

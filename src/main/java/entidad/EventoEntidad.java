@@ -1,10 +1,20 @@
 package entidad;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-
+/**
+ * Entidad de dominio que representa un evento dentro del sistema.
+ * Mapea la estructura de la base de datos correspondiente a los eventos 
+ * creados por los administradores, incluyendo detalles de ubicación, 
+ * capacidad y las cuentas empresariales vinculadas.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class EventoEntidad {
-    
+
     private int idEvento;
     private String nombre;
     private String descripcion;
@@ -18,21 +28,11 @@ public class EventoEntidad {
     private String estado;
     private String ciudad;
     private int idAdministrador;
-    private int idCuenta;
+    private List<Integer> idsCuentas = new ArrayList<>();
 
     public EventoEntidad() {
     }
 
-    public int getIdCuenta() {
-        return idCuenta;
-    }
-
-    public void setIdCuenta(int idCuenta) {
-        this.idCuenta = idCuenta;
-    }
-
-    
-    
     public int getIdEvento() {
         return idEvento;
     }
@@ -136,6 +136,12 @@ public class EventoEntidad {
     public void setIdAdministrador(int idAdministrador) {
         this.idAdministrador = idAdministrador;
     }
-    
-    
+
+    public List<Integer> getIdsCuentas() {
+        return idsCuentas;
+    }
+
+    public void setIdsCuentas(List<Integer> idsCuentas) {
+        this.idsCuentas = idsCuentas;
+    }
 }

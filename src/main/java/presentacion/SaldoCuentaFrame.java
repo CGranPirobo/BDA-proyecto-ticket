@@ -20,6 +20,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Ventana de interfaz gráfica que permite al cliente verificar el saldo de sus cuentas personales, 
+ * consultar los detalles financieros y visualizar los movimientos recientes asociados a cada cuenta.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class SaldoCuentaFrame extends JFrame {
 
     private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy\nHH:mm");
@@ -39,6 +46,12 @@ public class SaldoCuentaFrame extends JFrame {
     private Map<Integer, List<BoletoCompradoDTO>> pedidosAgrupados = new LinkedHashMap<>();
     private List<Integer> ordenPedidos = new ArrayList<>();
 
+    /**
+     * Inicializa la ventana de verificación de saldo vinculada al cliente actual, 
+     * configurando las capas de negocio y de persistencia.
+     * 
+     * @param cliente Datos del cliente autenticado.
+     */
     public SaldoCuentaFrame(ClienteDTO cliente) {
         this.cliente = cliente;
         Conexion conexion = new Conexion();
@@ -51,6 +64,9 @@ public class SaldoCuentaFrame extends JFrame {
         MenuLateralCliente.instalar(this, cliente);
     }
 
+    /**
+     * Configura las propiedades principales de la ventana.
+     */
     private void configurarVentana() {
         setTitle("TuTicket - Verificar Saldo de cuentas");
         setSize(800, 650);
@@ -60,8 +76,11 @@ public class SaldoCuentaFrame extends JFrame {
         getContentPane().setBackground(new Color(217, 217, 217));
     }
 
+    /**
+     * Inicializa y organiza los componentes visuales de la interfaz, 
+     * incluyendo el selector de cuentas, la visualización de saldo grande y la tabla de movimientos recientes.
+     */
     private void inicializarComponentes() {
-        // --- NORTE: Título ---
         JLabel lblTitulo = new JLabel("Verificar Saldo de cuentas", SwingConstants.CENTER);
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 26));
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
@@ -72,11 +91,9 @@ public class SaldoCuentaFrame extends JFrame {
         panelCentral.setOpaque(false);
         panelCentral.setBorder(BorderFactory.createEmptyBorder(0, 30, 20, 30));
 
-        // --- SECCIÓN SUPERIOR: Cuentas y Saldo (GridLayout 1x2) ---
         JPanel panelTop = new JPanel(new GridLayout(1, 2, 20, 0));
         panelTop.setOpaque(false);
 
-        // Mitad Izquierda: ComboBox y Tabla pequeña
         JPanel panelCuentasIzq = new JPanel(new BorderLayout(0, 15));
         panelCuentasIzq.setOpaque(false);
         
@@ -86,7 +103,6 @@ public class SaldoCuentaFrame extends JFrame {
         
         cmbCuentas = new JComboBox<>();
         cmbCuentas.setPreferredSize(new Dimension(180, 30));
-        // ACTION LISTENER: Cada vez que cambias de tarjeta, actualiza la tabla inferior
         cmbCuentas.addActionListener(e -> actualizarVistaSeleccion());
         
         panelCombo.add(cmbCuentas);
@@ -106,7 +122,6 @@ public class SaldoCuentaFrame extends JFrame {
         scrollCuentas.getViewport().setBackground(new Color(217, 217, 217));
         panelCuentasIzq.add(scrollCuentas, BorderLayout.CENTER);
 
-        // Mitad Derecha: Saldo Grande
         JPanel panelSaldoDer = new JPanel();
         panelSaldoDer.setLayout(new BoxLayout(panelSaldoDer, BoxLayout.Y_AXIS));
         panelSaldoDer.setOpaque(false);
@@ -134,7 +149,6 @@ public class SaldoCuentaFrame extends JFrame {
         panelCentral.add(panelTop);
         panelCentral.add(Box.createRigidArea(new Dimension(0, 30)));
 
-        // --- SECCIÓN INFERIOR: Movimientos Recientes ---
         JLabel lblMovimientos = new JLabel("Movimientos Recientes (3 mas recientes)");
         lblMovimientos.setFont(new Font("Segoe UI", Font.BOLD, 18));
         lblMovimientos.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -148,12 +162,11 @@ public class SaldoCuentaFrame extends JFrame {
         tablaMovimientos = new JTable(modeloMovimientos);
         tablaMovimientos.setRowHeight(60);
         tablaMovimientos.setShowGrid(false);
-        tablaMovimientos.setBackground(new Color(195, 203, 192)); // Tono verdoso del diseño
+        tablaMovimientos.setBackground(new Color(195, 203, 192)); 
         tablaMovimientos.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         tablaMovimientos.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         tablaMovimientos.getTableHeader().setBackground(new Color(195, 203, 192));
         
-        // Configuración de columna del botón "Ver detalles"
         tablaMovimientos.getColumnModel().getColumn(4).setCellRenderer(new BotonDetallesRenderer());
         tablaMovimientos.getColumnModel().getColumn(4).setCellEditor(new BotonDetallesEditor());
         tablaMovimientos.getColumnModel().getColumn(2).setPreferredWidth(150);
@@ -166,10 +179,13 @@ public class SaldoCuentaFrame extends JFrame {
         add(panelCentral, BorderLayout.CENTER);
     }
 
+    /**
+     * Recarga los datos de las cuentas bancarias y los boletos del cliente 
+     * desde las capas correspondientes, actualizando las tablas y opciones del selector.
+     */
     public void recargarDatos() {
         try {
             listaCuentas = cuentaNegocio.listarCuentas(cliente.getIdCliente());
-            // Se traen todos los boletos, ya ordenados de más recientes a más antiguos por la DAO
             todosLosBoletos = compraDAO.obtenerBoletosPorCliente(cliente.getIdCliente());
 
             modeloCuentas.setRowCount(0);
@@ -184,7 +200,6 @@ public class SaldoCuentaFrame extends JFrame {
                 cmbCuentas.addItem("Terminación en " + term);
             }
 
-            // Al seleccionar el índice 0, se dispara automáticamente actualizarVistaSeleccion()
             if (!listaCuentas.isEmpty()) {
                 cmbCuentas.setSelectedIndex(0);
             }
@@ -193,23 +208,23 @@ public class SaldoCuentaFrame extends JFrame {
         }
     }
 
-    // MÉTODO CLAVE: Filtra los movimientos según la tarjeta seleccionada
+    /**
+     * Filtra los movimientos y pedidos recientes según la cuenta bancaria seleccionada en el menú desplegable, 
+     * actualizando el saldo grande mostrado y la tabla inferior.
+     */
     private void actualizarVistaSeleccion() {
         int idx = cmbCuentas.getSelectedIndex();
         if (idx < 0 || listaCuentas == null || listaCuentas.isEmpty()) return;
 
-        // 1. Obtener la tarjeta seleccionada en el ComboBox
         CuentaPersonalDTO cuentaSel = listaCuentas.get(idx);
         lblSaldoGrande.setText(String.format("$%,.2f", cuentaSel.getSaldo()));
 
-        // Limpiamos las tablas y mapas
         modeloMovimientos.setRowCount(0);
         pedidosAgrupados.clear();
         ordenPedidos.clear();
 
-        // 2. Filtrar boletos SOLO de esta cuenta
         for (BoletoCompradoDTO b : todosLosBoletos) {
-            if (b.getIdCuentaPersonal() == cuentaSel.getIdCuentaPersonal()) { // <-- FILTRO APLICADO AQUÍ
+            if (b.getIdCuentaPersonal() == cuentaSel.getIdCuentaPersonal()) { 
                 if (!pedidosAgrupados.containsKey(b.getIdCompra())) {
                     pedidosAgrupados.put(b.getIdCompra(), new ArrayList<>());
                     ordenPedidos.add(b.getIdCompra());
@@ -218,18 +233,17 @@ public class SaldoCuentaFrame extends JFrame {
             }
         }
 
-        // 3. Mostrar estrictamente los 3 más recientes
         int mostrados = 0;
         for (Integer idCompra : ordenPedidos) {
-            if (mostrados >= 3) break; // <-- LÍMITE DE 3 APLICADO AQUÍ
+            if (mostrados >= 3) break; 
             
             List<BoletoCompradoDTO> boletosPedido = pedidosAgrupados.get(idCompra);
             BoletoCompradoDTO primerBoleto = boletosPedido.get(0);
             double total = boletosPedido.stream().mapToDouble(BoletoCompradoDTO::getPrecioPago).sum();
             
             String resumenBoletos = "<html><div style='padding:5px;'><b>" + boletosPedido.size() + " boletos</b><br>" 
-                                  + primerBoleto.getNombre() + "</div></html>";
-                                  
+                                    + primerBoleto.getNombre() + "</div></html>";
+                                    
             boolean todosCancelados = boletosPedido.stream().allMatch(b -> "cancelado".equalsIgnoreCase(b.getEstatus()));
             String estadoPedido = todosCancelados ? "Pedido\nCancelado" : "Pedido\nCompletado";
 
@@ -244,11 +258,13 @@ public class SaldoCuentaFrame extends JFrame {
         }
     }
 
-    // --- RENDERER Y EDITOR PARA EL BOTÓN VER DETALLES ---
+    /**
+     * Renderizador gráfico para el botón de detalles en la tabla de movimientos recientes.
+     */
     private class BotonDetallesRenderer extends DefaultTableCellRenderer {
         private final JButton boton = new JButton("<html><div style='text-align:center;'>Ver detalles<br>Pedido</div></html>");
         public BotonDetallesRenderer() {
-            boton.setBackground(new Color(218, 165, 32)); // Naranja/Dorado
+            boton.setBackground(new Color(218, 165, 32)); 
             boton.setForeground(Color.WHITE);
             boton.setFont(new Font("Segoe UI", Font.BOLD, 11));
             boton.setFocusPainted(false);
@@ -260,6 +276,9 @@ public class SaldoCuentaFrame extends JFrame {
         }
     }
 
+    /**
+     * Editor interactivo para manejar la acción de clic en el botón de ver detalles de los pedidos recientes.
+     */
     private class BotonDetallesEditor extends AbstractCellEditor implements TableCellEditor {
         private final JButton boton = new JButton("<html><div style='text-align:center;'>Ver detalles<br>Pedido</div></html>");
         private int filaActual;
@@ -276,7 +295,6 @@ public class SaldoCuentaFrame extends JFrame {
                 fireEditingStopped();
                 int idCompra = ordenPedidos.get(filaActual);
                 List<BoletoCompradoDTO> boletosDelPedido = pedidosAgrupados.get(idCompra);
-                // Al hacer clic, se abre DetallesPedidoFrame y se le pasa ESTA ventana como padre
                 new DetallesPedidoFrame(SaldoCuentaFrame.this, boletosDelPedido, idCompra).setVisible(true);
             });
         }

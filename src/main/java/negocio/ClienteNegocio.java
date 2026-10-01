@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package negocio;
 
 import negocio.interfaces.IClienteNegocio;
@@ -10,12 +6,15 @@ import dtos.ClienteDTO;
 import dtos.CrearClienteDTO;
 import dtos.LoginDTO;
 import entidad.ClienteEntidad;
-import negocio.utilidades.ValidacionCliente;
+import negocio.utilidades.validaciones.ValidacionCliente;
 import persistencia.datos.interfaces.IAdministradorDAO;
 import persistencia.datos.interfaces.IClienteDAO;
 
 /**
- *
+ * Clase de la capa de negocio que gestiona las operaciones principales 
+ * de los clientes, como el registro de nuevas cuentas y la autenticación 
+ * en el sistema.
+ * 
  * @author gaelc
  */
 public class ClienteNegocio implements IClienteNegocio {
@@ -30,24 +29,19 @@ public class ClienteNegocio implements IClienteNegocio {
 
     @Override
     public ClienteDTO iniciarSesion(LoginDTO loginDTO) throws NegocioException {
-        // 1. Validar campos vacíos usando isBlank()
-        if (loginDTO.getUsuario() == null || loginDTO.getUsuario().isBlank()
-                || loginDTO.getContrasena() == null || loginDTO.getContrasena().isBlank()) {
-            throw new NegocioException("Debe ingresar su usuario y contraseña.");
-        }
+        validarCredencialesLogin(loginDTO);
 
         try {
-            // 2. Consultar a la base de datos
             ClienteEntidad entidad = clienteDAO.login(loginDTO.getUsuario(), loginDTO.getContrasena());
 
             if (entidad == null) {
                 throw new NegocioException("Usuario o contraseña incorrectos.");
             }
 
-            // 3. Mapear al DTO para devolver a la vista
             ClienteDTO respuestaDTO = new ClienteDTO();
             respuestaDTO.setIdCliente(entidad.getIdCliente());
             respuestaDTO.setNombre(entidad.getNombre());
+            respuestaDTO.setUsuario(entidad.getUsuario());
 
             return respuestaDTO;
 
@@ -59,32 +53,40 @@ public class ClienteNegocio implements IClienteNegocio {
     @Override
     public ClienteDTO registrarCliente(CrearClienteDTO dto) throws NegocioException {
         try {
-            // 1. Ejecutar las validaciones (Regex y duplicados)
             ValidacionCliente validador = new ValidacionCliente(clienteDAO, adminDAO);
             validador.validarRegistro(dto);
 
-            // 2. Convertir a entidad
             ClienteEntidad entidadNueva = new ClienteEntidad(
                     dto.getUsuario(), dto.getContrasena(), dto.getNombre(),
                     dto.getApellidoPA(), dto.getApellidoMA(), dto.getFechaNacimiento()
             );
 
-            // 3. Mandar al DAO
             ClienteEntidad entidadGuardada = clienteDAO.registrar(entidadNueva);
 
-            // 4. Mapear respuesta
             ClienteDTO respuestaDTO = new ClienteDTO();
             respuestaDTO.setIdCliente(entidadGuardada.getIdCliente());
-            // ... (setear el resto de atributos)
+            respuestaDTO.setUsuario(entidadGuardada.getUsuario());
+            respuestaDTO.setNombre(entidadGuardada.getNombre());
+            respuestaDTO.setApellidoPaterno(entidadGuardada.getApellidoPaterno());
+            respuestaDTO.setApellidoMaterno(entidadGuardada.getApellidoMaterno());
+            respuestaDTO.setFechaNacimiento(entidadGuardada.getFechaNacimiento());
 
             return respuestaDTO;
 
         } catch (NegocioException ex) {
-            // Si es un error de validación (Regex, campos vacíos, duplicado), lo dejamos pasar tal cual
             throw ex;
         } catch (PersistenciaException ex) {
-            // Si la base de datos falló al guardar (ej. se apagó el servidor), lo envolvemos
             throw new NegocioException("Ocurrió un problema interno al guardar el cliente.", ex);
+        }
+    }
+
+    /**
+     * Verifica que los campos de inicio de sesión no estén vacíos antes de ir a la base de datos.
+     */
+    private void validarCredencialesLogin(LoginDTO loginDTO) throws NegocioException {
+        if (loginDTO == null || loginDTO.getUsuario() == null || loginDTO.getUsuario().isBlank()
+                || loginDTO.getContrasena() == null || loginDTO.getContrasena().isBlank()) {
+            throw new NegocioException("Debe ingresar su usuario y contraseña.");
         }
     }
 }

@@ -1,6 +1,13 @@
 package entidad;
 
-
+/**
+ * Entidad de dominio que representa las métricas de ganancias de un evento.
+ * Mapea la estructura de los datos obtenidos de la base de datos para generar
+ * reportes financieros y estadísticas de asistencia.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class GananciaEventoEntidad {
     
     private String nombre;
@@ -42,7 +49,4 @@ public class GananciaEventoEntidad {
     public void setIngresos(double ingresos) {
         this.ingresos = ingresos;
     }
-    
-    
-    
 }

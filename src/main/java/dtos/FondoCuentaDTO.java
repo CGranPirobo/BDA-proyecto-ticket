@@ -1,6 +1,14 @@
 package dtos;
 
-
+/**
+ * Objeto de transferencia de datos (DTO) que representa la cantidad de fondos 
+ * asociada a una cuenta bancaria específica.
+ * Se utiliza principalmente para operaciones financieras, como la consulta 
+ * de saldo o la transferencia de fondos hacia una cuenta.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class FondoCuentaDTO {
     
     private String banco;
@@ -39,7 +47,4 @@ public class FondoCuentaDTO {
     public void setFondos(double fondos) {
         this.fondos = fondos;
     }
-    
-    
-    
 }

@@ -1,13 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dtos;
 
 import java.util.Date;
 
 /**
- *
+ * Objeto de transferencia de datos (DTO) que contiene la información 
+ * del perfil de un usuario cliente. 
+ * Agrupa los datos necesarios para registrar nuevas cuentas o para 
+ * desplegar la información del usuario desde la base de datos.
+ * 
  * @author gaelc
  */
 public class ClienteDTO {
@@ -23,7 +23,6 @@ public class ClienteDTO {
     public ClienteDTO() {
     }
 
-    //inserciones
     public ClienteDTO(String usuario, String contrasena, String nombre, String apellidoPaterno, String apellidoMaterno, Date fechaNacimiento) {
         this.usuario = usuario;
         this.contrasena = contrasena;
@@ -33,7 +32,6 @@ public class ClienteDTO {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    //consultas
     public ClienteDTO(int idCliente, String usuario, String contrasena, String nombre, String apellidoPaterno, String apellidoMaterno, Date fechaNacimiento) {
         this.idCliente = idCliente;
         this.usuario = usuario;
@@ -99,5 +97,4 @@ public class ClienteDTO {
     public void setFechaNacimiento(Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
-
 }

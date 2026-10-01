@@ -16,6 +16,13 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.table.TableCellEditor;
 
+/**
+ * Ventana de interfaz gráfica que muestra el historial de compras y pedidos 
+ * realizados por el cliente en el sistema.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class HistorialComprasFrame extends JFrame {
 
     private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -24,10 +31,14 @@ public class HistorialComprasFrame extends JFrame {
     private JTable tablaHistorial;
     private DefaultTableModel modeloTabla;
 
-    // Agrupamos los boletos por el ID de la Compra (Pedido)
     private Map<Integer, List<BoletoCompradoDTO>> pedidosAgrupados = new LinkedHashMap<>();
     private List<Integer> ordenPedidos = new ArrayList<>();
 
+    /**
+     * Inicializa la ventana del historial de compras vinculada al cliente actual.
+     * 
+     * @param cliente Datos del cliente en sesión.
+     */
     public HistorialComprasFrame(ClienteDTO cliente) {
         this.cliente = cliente;
         this.compraDAO = new CompraDAO(new Conexion());
@@ -37,6 +48,9 @@ public class HistorialComprasFrame extends JFrame {
         MenuLateralCliente.instalar(this, cliente);
     }
 
+    /**
+     * Configura las propiedades principales de la ventana.
+     */
     private void configurarVentana() {
         setTitle("TuTicket - Mi Historial de compras");
         setSize(950, 600);
@@ -46,6 +60,10 @@ public class HistorialComprasFrame extends JFrame {
         getContentPane().setBackground(new Color(217, 217, 217));
     }
 
+    /**
+     * Inicializa y organiza los componentes visuales de la interfaz de historial, 
+     * configurando la tabla, columnas y renderizadores interactivos.
+     */
     private void inicializarComponentes() {
         JLabel lblTitulo = new JLabel("Mi Historial de compras", SwingConstants.LEFT);
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
@@ -55,7 +73,7 @@ public class HistorialComprasFrame extends JFrame {
         modeloTabla = new DefaultTableModel(new String[]{"Fecha", "Estado", "Pedido", "ID Pedido", "Método de pago", "Precio total", "Acción"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 6; // Solo el botón "Ver detalles" es editable/clicable
+                return column == 6; 
             }
         };
 
@@ -67,7 +85,6 @@ public class HistorialComprasFrame extends JFrame {
         tablaHistorial.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         tablaHistorial.getTableHeader().setBackground(new Color(217, 217, 217));
 
-        // Botón Detalles
         tablaHistorial.getColumnModel().getColumn(6).setCellRenderer(new BotonDetallesRenderer());
         tablaHistorial.getColumnModel().getColumn(6).setCellEditor(new BotonDetallesEditor());
 
@@ -80,6 +97,10 @@ public class HistorialComprasFrame extends JFrame {
         add(scroll, BorderLayout.CENTER);
     }
 
+    /**
+     * Consulta los boletos comprados por el cliente en la base de datos, 
+     * los agrupa por identificador de pedido y actualiza los registros de la tabla.
+     */
     public void cargarHistorial() {
         modeloTabla.setRowCount(0);
         pedidosAgrupados.clear();
@@ -88,7 +109,6 @@ public class HistorialComprasFrame extends JFrame {
         try {
             List<BoletoCompradoDTO> todosLosBoletos = compraDAO.obtenerBoletosPorCliente(cliente.getIdCliente());
 
-            // Agrupar por ID de compra
             for (BoletoCompradoDTO b : todosLosBoletos) {
                 if (!pedidosAgrupados.containsKey(b.getIdCompra())) {
                     pedidosAgrupados.put(b.getIdCompra(), new ArrayList<>());
@@ -97,7 +117,6 @@ public class HistorialComprasFrame extends JFrame {
                 pedidosAgrupados.get(b.getIdCompra()).add(b);
             }
 
-            // Crear filas por pedido
             for (Integer idCompra : ordenPedidos) {
                 List<BoletoCompradoDTO> boletosPedido = pedidosAgrupados.get(idCompra);
                 BoletoCompradoDTO primerBoleto = boletosPedido.get(0);
@@ -107,7 +126,7 @@ public class HistorialComprasFrame extends JFrame {
                         + "<b>" + boletosPedido.size() + " boletos</b><br><br>"
                         + primerBoleto.getNombre()
                         + "</div></html>";
-                // Determinar estado general del pedido
+                
                 boolean todosCancelados = boletosPedido.stream().allMatch(b -> "cancelado".equalsIgnoreCase(b.getEstatus()));
                 String estadoPedido = todosCancelados ? "Cancelado" : "Completado";
 
@@ -126,13 +145,15 @@ public class HistorialComprasFrame extends JFrame {
         }
     }
 
-    // --- RENDERER Y EDITOR PARA EL BOTÓN VER DETALLES ---
+    /**
+     * Renderizador gráfico para el botón de visualización de detalles en la tabla.
+     */
     private class BotonDetallesRenderer extends DefaultTableCellRenderer {
 
         private final JButton boton = new JButton("Ver detalles Pedido");
 
         public BotonDetallesRenderer() {
-            boton.setBackground(new Color(218, 165, 32)); // Amarillo/Dorado del diseño
+            boton.setBackground(new Color(218, 165, 32)); 
             boton.setForeground(Color.WHITE);
             boton.setFont(new Font("Segoe UI", Font.BOLD, 12));
             boton.setFocusPainted(false);
@@ -145,6 +166,9 @@ public class HistorialComprasFrame extends JFrame {
         }
     }
 
+    /**
+     * Editor interactivo para manejar la acción de clic en el botón de ver detalles de cada pedido.
+     */
     private class BotonDetallesEditor extends AbstractCellEditor implements TableCellEditor {
 
         private final JButton boton = new JButton("Ver detalles Pedido");
@@ -163,7 +187,6 @@ public class HistorialComprasFrame extends JFrame {
                 int idCompra = ordenPedidos.get(filaActual);
                 List<BoletoCompradoDTO> boletosDelPedido = pedidosAgrupados.get(idCompra);
 
-                // Abrir pantalla de detalles y pasarle la lista de boletos y la referencia a esta ventana para recargarla
                 new DetallesPedidoFrame(HistorialComprasFrame.this, boletosDelPedido, idCompra).setVisible(true);
             });
         }

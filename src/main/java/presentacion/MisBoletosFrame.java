@@ -38,15 +38,18 @@ import javax.swing.table.TableCellRenderer;
 import persistencia.datos.CompraDAO;
 
 /**
- *
+ * Ventana de interfaz gráfica que muestra los boletos adquiridos por el cliente, 
+ * permitiendo gestionar su cancelación individual y generar los comprobantes en formato PDF.
+ * 
  * @author gaelc
+ * @author M-14
  */
 public class MisBoletosFrame extends JFrame {
 
     private static final DateTimeFormatter FORMATO_FECHA
             = DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a", Locale.of("es", "MX"));
     private static final String[] COLUMNAS = {
-        "Nombre", "Precio", "Secci n", "Fila", "Asiento", "Fecha de Compra", "Estatus", "Acciones", "Generar PDF"};
+        "Nombre", "Precio", "Sección", "Fila", "Asiento", "Fecha de Compra", "Estatus", "Acciones", "Generar PDF"};
     private static final int COL_ACCION = 7;
     private static final int COL_PDF = 8;
     private static final Color ROJO = new Color(239, 68, 68);
@@ -59,6 +62,11 @@ public class MisBoletosFrame extends JFrame {
     private JTable tablaBoletos;
     private DefaultTableModel modeloTabla;
 
+    /**
+     * Inicializa la ventana de mis boletos vinculada al cliente en sesión.
+     * 
+     * @param cliente Datos del cliente autenticado.
+     */
     public MisBoletosFrame(ClienteDTO cliente) {
         this.cliente = cliente;
         this.compraDAO = new CompraDAO(new Conexion());
@@ -69,6 +77,9 @@ public class MisBoletosFrame extends JFrame {
         MenuLateralCliente.instalar(this, cliente);
     }
 
+    /**
+     * Configura las propiedades principales de la ventana.
+     */
     private void configurarVentana() {
         setTitle("TuTicket - Mis Boletos");
         setSize(900, 450);
@@ -77,6 +88,10 @@ public class MisBoletosFrame extends JFrame {
         setLayout(new BorderLayout(10, 10));
     }
 
+    /**
+     * Inicializa y organiza los componentes visuales de la interfaz, 
+     * incluyendo la tabla de boletos y el panel inferior.
+     */
     private void inicializarComponentes() {
         JLabel lblTitulo = new JLabel("Mis Boletos", SwingConstants.CENTER);
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
@@ -91,6 +106,9 @@ public class MisBoletosFrame extends JFrame {
         add(crearPanelInferior(), BorderLayout.SOUTH);
     }
 
+    /**
+     * Configura el modelo y las propiedades de visualización de la tabla de boletos.
+     */
     private void crearTabla() {
         modeloTabla = new DefaultTableModel(COLUMNAS, 0) {
             @Override
@@ -111,6 +129,9 @@ public class MisBoletosFrame extends JFrame {
         configurarColumnas();
     }
 
+    /**
+     * Configura los anchos de columna, renderizadores y editores interactivos para las acciones y PDF.
+     */
     private void configurarColumnas() {
         CeldaTexto celdaTexto = new CeldaTexto();
         for (int i = 0; i <= 6; i++) {
@@ -119,19 +140,21 @@ public class MisBoletosFrame extends JFrame {
         tablaBoletos.getColumnModel().getColumn(0).setPreferredWidth(130);
         tablaBoletos.getColumnModel().getColumn(5).setPreferredWidth(140);
 
-        // Columna Cancelar
         tablaBoletos.getColumnModel().getColumn(COL_ACCION).setPreferredWidth(130);
         tablaBoletos.getColumnModel().getColumn(COL_ACCION).setCellRenderer(new BotonRenderer());
         tablaBoletos.getColumnModel().getColumn(COL_ACCION).setCellEditor(new BotonEditor());
 
-        // Columna PDF
         tablaBoletos.getColumnModel().getColumn(COL_PDF).setPreferredWidth(100);
         tablaBoletos.getColumnModel().getColumn(COL_PDF).setCellRenderer(new BotonPdfRenderer());
         tablaBoletos.getColumnModel().getColumn(COL_PDF).setCellEditor(new BotonPdfEditor());
     }
     
-    // --- LOGICA PARA BOTON PDF ---
-   private void configurarBotonPdf(JButton boton) {
+    /**
+     * Aplica los estilos visuales estándar al botón de generación de PDF.
+     * 
+     * @param boton Botón a configurar.
+     */
+    private void configurarBotonPdf(JButton boton) {
         boton.setText("PDF");
         boton.setBackground(new Color(239, 68, 68));
         boton.setForeground(Color.WHITE);
@@ -141,12 +164,18 @@ public class MisBoletosFrame extends JFrame {
         boton.setFocusPainted(false);
     }
 
+    /**
+     * Genera el archivo PDF del boleto mediante la utilidad correspondiente 
+     * y ofrece al usuario la opción de abrirlo inmediatamente.
+     * 
+     * @param boleto Objeto DTO del boleto a exportar.
+     */
     private void generarYMostrarPDF(BoletoCompradoDTO boleto) {
         try {
             String ruta = negocio.utilidades.GeneradorBoletoPDF.generar(boleto);
             
             int resp = JOptionPane.showConfirmDialog(this, 
-                "PDF generado correctamente en:\n" + ruta + "\n\n Desea abrirlo ahora?", 
+                "PDF generado correctamente en:\n" + ruta + "\n\n¿Desea abrirlo ahora?", 
                 "Boleto Generado", JOptionPane.YES_NO_OPTION);
                 
             if (resp == JOptionPane.YES_OPTION) {
@@ -157,6 +186,9 @@ public class MisBoletosFrame extends JFrame {
         }
     }
 
+    /**
+     * Renderizador gráfico para la columna de botones PDF.
+     */
     private class BotonPdfRenderer implements TableCellRenderer {
         private final JButton boton = new JButton();
         @Override
@@ -166,6 +198,9 @@ public class MisBoletosFrame extends JFrame {
         }
     }
 
+    /**
+     * Editor interactivo para gestionar la acción de clic en el botón de generación de PDF.
+     */
     private class BotonPdfEditor extends AbstractCellEditor implements TableCellEditor {
         private final JButton boton = new JButton();
         private int filaActual;
@@ -186,6 +221,11 @@ public class MisBoletosFrame extends JFrame {
         public Object getCellEditorValue() { return ""; }
     }
 
+    /**
+     * Crea el panel inferior de la ventana con el botón de cierre.
+     * 
+     * @return JPanel configurado.
+     */
     private JPanel crearPanelInferior() {
         JButton btnCerrar = new JButton("Cerrar");
         btnCerrar.addActionListener(e -> dispose());
@@ -194,6 +234,9 @@ public class MisBoletosFrame extends JFrame {
         return panel;
     }
 
+    /**
+     * Consulta y carga la lista de boletos comprados por el cliente actual en la tabla.
+     */
     private void cargarBoletos() {
         modeloTabla.setRowCount(0);
         try {
@@ -206,6 +249,12 @@ public class MisBoletosFrame extends JFrame {
         }
     }
 
+    /**
+     * Construye un arreglo de objetos que representa una fila de la tabla a partir de un boleto.
+     * 
+     * @param b Objeto DTO del boleto.
+     * @return Arreglo de datos para la fila.
+     */
     private Object[] crearFila(BoletoCompradoDTO b) {
         return new Object[]{
             b.getNombre() + " - " + b.getCategoria(),
@@ -215,14 +264,26 @@ public class MisBoletosFrame extends JFrame {
             b.getAsiento(),
             b.getFechaCompra() != null ? b.getFechaCompra().format(FORMATO_FECHA) : "",
             capitalizar(b.getEstatus()),
-            "", "" // Dos botones
+            "", "" 
         };
     }
 
+    /**
+     * Formatea un valor numérico de precio a una cadena con formato de moneda.
+     * 
+     * @param precio Valor monetario.
+     * @return Cadena formateada.
+     */
     private String formatearPrecio(double precio) {
         return String.format(Locale.US, "$%,.2f", precio);
     }
 
+    /**
+     * Capitaliza la primera letra de una cadena de texto.
+     * 
+     * @param texto Texto original.
+     * @return Texto con la inicial en mayúscula.
+     */
     private String capitalizar(String texto) {
         if (texto == null || texto.isEmpty()) {
             return "";
@@ -230,13 +291,21 @@ public class MisBoletosFrame extends JFrame {
         return texto.substring(0, 1).toUpperCase() + texto.substring(1);
     }
 
+    /**
+     * Muestra un cuadro de diálogo con un mensaje de error.
+     * 
+     * @param mensaje Mensaje a desplegar.
+     */
     private void mostrarError(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     /**
-     * Solo se puede cancelar un boleto "comprado" dentro de las 24 horas desde
-     * la compra.
+     * Valida si un boleto es elegible para cancelación (estatus "comprado" 
+     * y con menos de 24 horas desde su fecha de adquisición).
+     * 
+     * @param b Objeto DTO del boleto.
+     * @return true si se puede cancelar, false en caso contrario.
      */
     private boolean puedeCancelar(BoletoCompradoDTO b) {
         return "comprado".equalsIgnoreCase(b.getEstatus())
@@ -244,6 +313,13 @@ public class MisBoletosFrame extends JFrame {
                 && LocalDateTime.now().isBefore(b.getFechaCompra().plusHours(24));
     }
 
+    /**
+     * Configura dinámicamente el texto y color de fondo del botón de cancelación 
+     * en función de la elegibilidad y el estatus del boleto.
+     * 
+     * @param boton Botón a configurar.
+     * @param b Objeto DTO del boleto asociado.
+     */
     private void configurarBoton(JButton boton, BoletoCompradoDTO b) {
         boolean cancelado = "cancelado".equalsIgnoreCase(b.getEstatus());
         boton.setText(cancelado ? "Cancelado" : puedeCancelar(b) ? "Cancelar" : "Fuera de plazo");
@@ -255,19 +331,29 @@ public class MisBoletosFrame extends JFrame {
         boton.setFocusPainted(false);
     }
 
+    /**
+     * Abre la pantalla de confirmación de cancelación bloqueando temporalmente esta ventana.
+     * 
+     * @param b Objeto DTO del boleto a cancelar.
+     */
     private void confirmarCancelacion(BoletoCompradoDTO b) {
-        setEnabled(false); // mientras la pantalla de cancelación está abierta, esta se bloquea
+        setEnabled(false); 
         CancelarBoletoFrame pantalla = new CancelarBoletoFrame(this, b, () -> cancelarBoleto(b));
         pantalla.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                setEnabled(true); // al cerrarse (confirmando o no), se vuelve a activar
+                setEnabled(true); 
                 toFront();
             }
         });
         pantalla.setVisible(true);
     }
 
+    /**
+     * Ejecuta la cancelación del boleto a través del DAO y refresca los datos de la tabla.
+     * 
+     * @param b Objeto DTO del boleto a cancelar.
+     */
     private void cancelarBoleto(BoletoCompradoDTO b) {
         try {
             compraDAO.cancelarBoleto(b.getIdDetalles());
@@ -277,14 +363,22 @@ public class MisBoletosFrame extends JFrame {
         } catch (Exception ex) {
             mostrarError("No se pudo cancelar el boleto: " + ex.getMessage());
         }
-        cargarBoletos(); // refresca la tabla (estatus y botón)
+        cargarBoletos(); 
     }
 
+    /**
+     * Escapa caracteres especiales en formato HTML para garantizar un renderizado seguro.
+     * 
+     * @param s Texto original.
+     * @return Texto sanitizado para HTML.
+     */
     private static String esc(String s) {
         return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
 
-    // ---------- Renderers / editor ----------
+    /**
+     * Renderizador de texto centrado con soporte HTML para las celdas estándar de la tabla.
+     */
     private static class CeldaTexto extends DefaultTableCellRenderer {
 
         @Override
@@ -296,6 +390,9 @@ public class MisBoletosFrame extends JFrame {
         }
     }
 
+    /**
+     * Renderizador gráfico para el botón de cancelación en la tabla.
+     */
     private class BotonRenderer implements TableCellRenderer {
 
         private final JButton boton = new JButton();
@@ -307,6 +404,9 @@ public class MisBoletosFrame extends JFrame {
         }
     }
 
+    /**
+     * Editor interactivo para gestionar la acción de clic en el botón de cancelación de boletos.
+     */
     private class BotonEditor extends AbstractCellEditor implements TableCellEditor {
 
         private final JButton boton = new JButton();
@@ -332,7 +432,4 @@ public class MisBoletosFrame extends JFrame {
             return "";
         }
     }
-    
-    
-
 }

@@ -25,10 +25,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
-// NUEVOS IMPORT PARA LA CONEXION Y DAO
 import Persistencias.Conexion;
 import persistencia.datos.CompraDAO;
 
+/**
+ * Ventana de interfaz gráfica que permite al cliente interactuar con el mapa de asientos de un evento, 
+ * seleccionar ubicaciones disponibles, gestionar el límite de boletos y visualizar el recibo de compra en tiempo real.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class SeleccionAsientosFrame extends JFrame {
 
     private final ClienteDTO cliente;
@@ -42,19 +48,27 @@ public class SeleccionAsientosFrame extends JFrame {
     private JLabel lblBoletosContador;
     private JLabel lblTotalPrecio;
 
+    /**
+     * Inicializa la ventana de selección de asientos vinculada al cliente y al evento actual, 
+     * consultando los asientos ya ocupados en la base de datos.
+     * 
+     * @param cliente Datos del cliente en sesión.
+     * @param evento Datos del evento seleccionado.
+     */
     public SeleccionAsientosFrame(ClienteDTO cliente, EventoDTO evento) {
         this.cliente = cliente;
         this.evento = evento;
         this.boletosSeleccionados = new ArrayList<>();
 
-        // --- CARGAR ASIENTOS OCUPADOS ---
         this.asientosOcupadosEnBD = new CompraDAO(new Conexion()).obtenerAsientosOcupados(evento.getIdEvento());
 
         configurarVentana();
         inicializarComponentes();
-        MenuLateralCliente.instalar(this, cliente);
     }
 
+    /**
+     * Configura las propiedades principales de la ventana.
+     */
     private void configurarVentana() {
         setTitle("Selección de asiento y fila - " + evento.getNombre());
         setSize(1000, 650);
@@ -63,6 +77,10 @@ public class SeleccionAsientosFrame extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Inicializa y organiza los componentes visuales de la interfaz, dividiéndola en el mapa de asientos 
+     * y el panel derecho de resumen y totales.
+     */
     private void inicializarComponentes() {
         JPanel panelMapa = crearMapaAsientos();
         JPanel panelDerecho = crearPanelDerecho();
@@ -75,6 +93,11 @@ public class SeleccionAsientosFrame extends JFrame {
         add(splitPane, BorderLayout.CENTER);
     }
 
+    /**
+     * Construye de manera dinámica el mapa visual del auditorio u recinto a partir de la distribución de filas y asientos.
+     * 
+     * @return JPanel que representa el mapa de asientos y el escenario.
+     */
     private JPanel crearMapaAsientos() {
         JPanel panelMapa = new JPanel();
         panelMapa.setLayout(new BoxLayout(panelMapa, BoxLayout.Y_AXIS));
@@ -124,6 +147,14 @@ public class SeleccionAsientosFrame extends JFrame {
         return panelMapa;
     }
 
+    /**
+     * Crea un botón de opción (JToggleButton) para un asiento específico, 
+     * validando si se encuentra ocupado en la base de datos para deshabilitarlo.
+     * 
+     * @param fila Letra identificadora de la fila.
+     * @param numero Número de asiento.
+     * @return JToggleButton configurado.
+     */
     private JToggleButton crearBotonAsiento(String fila, int numero) {
         JToggleButton btn = new JToggleButton(String.valueOf(numero));
         btn.setPreferredSize(new Dimension(35, 35));
@@ -134,7 +165,6 @@ public class SeleccionAsientosFrame extends JFrame {
         btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
 
-        // --- VALIDAR CONTRA BASE DE DATOS REAL ---
         String codigoAsiento = fila + "-" + numero;
         if (asientosOcupadosEnBD != null && asientosOcupadosEnBD.contains(codigoAsiento)) {
             btn.setEnabled(false);
@@ -146,6 +176,14 @@ public class SeleccionAsientosFrame extends JFrame {
         return btn;
     }
 
+    /**
+     * Gestiona la lógica de selección y deselección de un asiento, validando los límites máximos permitidos 
+     * por boleto y actualizando el recibo de compra.
+     * 
+     * @param btn Componente de botón de asiento.
+     * @param fila Letra de la fila.
+     * @param numero Número de asiento.
+     */
     private void manejarClickAsiento(JToggleButton btn, String fila, int numero) {
         if (btn.isSelected()) {
             int limiteReal = Math.min(MAX_BOLETOS, evento.getBoletosRestantes());
@@ -166,6 +204,12 @@ public class SeleccionAsientosFrame extends JFrame {
         actualizarRecibo();
     }
 
+    /**
+     * Crea y organiza el panel derecho que muestra el detalle de los asientos seleccionados, 
+     * los contadores, el precio total y el botón para continuar con la compra.
+     * 
+     * @return JPanel configurado.
+     */
     private JPanel crearPanelDerecho() {
         JPanel panelPrincipal = new JPanel(new BorderLayout());
         panelPrincipal.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -213,6 +257,9 @@ public class SeleccionAsientosFrame extends JFrame {
         return panelPrincipal;
     }
 
+    /**
+     * Actualiza visualmente el recibo y desglose de boletos seleccionados, recalculando el precio total acumulado.
+     */
     private void actualizarRecibo() {
         panelListaBoletos.removeAll();
         double total = 0;
@@ -225,7 +272,7 @@ public class SeleccionAsientosFrame extends JFrame {
             pnlBoleto.setBorder(BorderFactory.createTitledBorder("Boleto " + (i + 1)));
             pnlBoleto.setMaximumSize(new Dimension(400, 70));
 
-            pnlBoleto.add(new JLabel("Seccion"));
+            pnlBoleto.add(new JLabel("Sección"));
             pnlBoleto.add(new JLabel("Fila"));
             pnlBoleto.add(new JLabel("Asiento"));
             pnlBoleto.add(new JLabel("Precio"));

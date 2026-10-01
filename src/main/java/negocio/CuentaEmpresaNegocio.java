@@ -4,10 +4,18 @@ import negocio.interfaces.ICuentaEmpresaNegocio;
 import Persistencias.PersistenciaException;
 import dtos.CuentaEmpresaDTO;
 import entidad.CuentaEmpresaEntidad;
+import negocio.utilidades.validaciones.ValidacionCuentaEmpresa;
 import java.util.ArrayList;
 import java.util.List;
 import persistencia.datos.interfaces.ICuentaEmpresaDAO;
 
+/**
+ * Clase de la capa de negocio que gestiona las operaciones relacionadas 
+ * con las cuentas bancarias corporativas, permitiendo su registro y consulta.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class CuentaEmpresaNegocio implements ICuentaEmpresaNegocio {
 
     private final ICuentaEmpresaDAO cuentaDAO;
@@ -18,7 +26,8 @@ public class CuentaEmpresaNegocio implements ICuentaEmpresaNegocio {
 
     @Override
     public int crearCuentaEmpresa(CuentaEmpresaDTO dto) throws NegocioException {
-        validar(dto);
+        ValidacionCuentaEmpresa validador = new ValidacionCuentaEmpresa();
+        validador.validarRegistro(dto);
 
         try {
             if (cuentaDAO.existeNumeroCuenta(dto.getNumeroCuenta().trim())) {
@@ -43,33 +52,11 @@ public class CuentaEmpresaNegocio implements ICuentaEmpresaNegocio {
         }
     }
 
-    private void validar(CuentaEmpresaDTO dto) throws NegocioException {
-        if (dto == null) {
-            throw new NegocioException("Los datos de la cuenta son obligatorios.");
-        }
-        if (vacio(dto.getNumeroCuenta()) || vacio(dto.getBanco())) {
-            throw new NegocioException("Todos los campos son obligatorios.");
-        }
-        if (!dto.getNumeroCuenta().trim().matches("\\d{10,18}")) {
-            throw new NegocioException("El número de cuenta debe tener entre 10 y 18 dígitos.");
-        }
-        if (dto.getBanco().trim().length() > 50) {
-            throw new NegocioException("El nombre del banco no puede pasar de 50 caracteres.");
-        }
-        if (dto.getIdEmpresa() <= 0) {
-            throw new NegocioException("No se identificó la empresa de la cuenta.");
-        }
-    }
-
-    private boolean vacio(String texto) {
-        return texto == null || texto.trim().isEmpty();
-    }
-
     private CuentaEmpresaEntidad convertirAEntidad(CuentaEmpresaDTO dto) {
         CuentaEmpresaEntidad entidad = new CuentaEmpresaEntidad();
         entidad.setNumeroCuenta(dto.getNumeroCuenta().trim());
         entidad.setBanco(dto.getBanco().trim());
-        entidad.setSaldo(0); // toda cuenta nueva arranca en 0
+        entidad.setSaldo(0); // Toda cuenta nueva arranca en 0
         entidad.setIdEmpresa(dto.getIdEmpresa());
         return entidad;
     }
@@ -83,5 +70,4 @@ public class CuentaEmpresaNegocio implements ICuentaEmpresaNegocio {
         dto.setIdEmpresa(entidad.getIdEmpresa());
         return dto;
     }
-
 }

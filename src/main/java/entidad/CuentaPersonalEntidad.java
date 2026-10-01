@@ -1,12 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package entidad;
 
 /**
- *
+ * Entidad de dominio que representa la cuenta bancaria personal de un cliente.
+ * Mapea la estructura de la base de datos para almacenar y recuperar la 
+ * información financiera asociada a los fondos de los usuarios.
+ * 
  * @author gaelc
+ * @author M-14
  */
 public class CuentaPersonalEntidad {
 

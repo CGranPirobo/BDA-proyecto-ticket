@@ -10,8 +10,15 @@ import java.util.List;
 import negocio.interfaces.IGananciasNegocios;
 import persistencia.datos.interfaces.IGananciasDAO;
 
-
-public class GananciaNegocio implements IGananciasNegocios{
+/**
+ * Clase de la capa de negocio encargada de gestionar la lógica de las
+ * ganancias obtenidas por los eventos y los fondos disponibles en las cuentas
+ * de la empresa.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
+public class GananciaNegocio implements IGananciasNegocios {
     
     private final IGananciasDAO gananciasDAO;
  
@@ -29,7 +36,8 @@ public class GananciaNegocio implements IGananciasNegocios{
                         entidad.getNombre(),
                         entidad.getTotalBoletos(),
                         entidad.getBoletosVendidos(),
-                        entidad.getIngresos()));
+                        entidad.getIngresos()
+                ));
             }
             return resultado;
         } catch (PersistenciaException ex) {
@@ -46,7 +54,8 @@ public class GananciaNegocio implements IGananciasNegocios{
                 resultado.add(new FondoCuentaDTO(
                         entidad.getBanco(),
                         enmascarar(entidad.getNumeroCuenta()),
-                        entidad.getFondos()));
+                        entidad.getFondos()
+                ));
             }
             return resultado;
         } catch (PersistenciaException ex) {
@@ -71,7 +80,10 @@ public class GananciaNegocio implements IGananciasNegocios{
         }
     }
  
-    /** 4152123456787731 -> 4152**7731 (nunca se muestra el número completo). */
+    /** 
+     * Enmascara el número de cuenta por seguridad (ej. 4152123456787731 -> 4152**7731).
+     * Garantiza que nunca se muestre el número completo en la capa de presentación.
+     */
     private String enmascarar(String numero) {
         if (numero == null) {
             return "";
@@ -82,5 +94,4 @@ public class GananciaNegocio implements IGananciasNegocios{
         }
         return n.substring(0, 4) + "**" + n.substring(n.length() - 4);
     }
-    
 }

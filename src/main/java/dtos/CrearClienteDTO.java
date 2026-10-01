@@ -2,8 +2,16 @@ package dtos;
 
 import java.util.Date;
 
-
+/**
+ * Objeto de transferencia de datos (DTO) utilizado para encapsular la 
+ * información requerida durante el proceso de registro de un nuevo cliente.
+ * Transporta los datos ingresados desde la interfaz de usuario hacia la 
+ * capa de negocio para su validación e inserción.
+ * 
+ * @author gaelc
+ */
 public class CrearClienteDTO {
+    
     private String usuario;
     private String contrasena;
     private String nombre;
@@ -70,6 +78,4 @@ public class CrearClienteDTO {
     public void setFechaNacimiento(Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
-    
-    
 }

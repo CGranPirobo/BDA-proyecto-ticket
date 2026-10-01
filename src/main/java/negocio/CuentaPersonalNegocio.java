@@ -6,9 +6,18 @@ import entidad.CuentaPersonalEntidad;
 import java.util.ArrayList;
 import java.util.List;
 import negocio.interfaces.ICuentaPersonalNegocio;
-import negocio.utilidades.ValidacionCuentaPersonal;
+import negocio.utilidades.validaciones.ValidacionCuentaPersonal;
 import persistencia.datos.interfaces.ICuentaPersonalDAO;
 
+/**
+ * Clase de la capa de negocio encargada de gestionar la lógica relacionada 
+ * con las cuentas bancarias personales de los clientes.
+ * Se encarga de listar las cuentas vinculadas y coordinar su registro 
+ * validando las reglas de negocio previamente.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class CuentaPersonalNegocio implements ICuentaPersonalNegocio {
 
     private final ICuentaPersonalDAO cuentaDAO;
@@ -22,8 +31,8 @@ public class CuentaPersonalNegocio implements ICuentaPersonalNegocio {
         try {
             List<CuentaPersonalDTO> resultado = new ArrayList<>();
             for (CuentaPersonalEntidad entidad : cuentaDAO.listarPorCliente(idCliente)) {
-                // Asumiendo que tu CuentaPersonalDTO tiene estos parámetros
-                resultado.add(new CuentaPersonalDTO(entidad.getIdCuentaPersonal(),
+                resultado.add(new CuentaPersonalDTO(
+                        entidad.getIdCuentaPersonal(),
                         entidad.getBanco(),
                         entidad.getNumeroCuenta(),
                         entidad.getSaldo(),

@@ -1,6 +1,14 @@
 package dtos;
 
-
+/**
+ * Objeto de transferencia de datos (DTO) que resume las métricas de rendimiento 
+ * financiero y de asistencia para un evento específico.
+ * Agrupa la información estadística sobre la capacidad del evento, la cantidad 
+ * de boletos vendidos y los ingresos totales generados.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class GananciaEventoDTO {
     
     private String nombre;
@@ -49,7 +57,4 @@ public class GananciaEventoDTO {
     public void setIngresos(double ingresos) {
         this.ingresos = ingresos;
     }
-    
-    
-    
 }

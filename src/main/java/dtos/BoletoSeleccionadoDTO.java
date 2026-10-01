@@ -1,5 +1,10 @@
 package dtos;
 
+/**
+ * Objeto de transferencia de datos (DTO) que representa un boleto 
+ * temporalmente seleccionado por el usuario en la interfaz antes de 
+ * concretar la transacción.
+ */
 public class BoletoSeleccionadoDTO {
 
     private String seccion;

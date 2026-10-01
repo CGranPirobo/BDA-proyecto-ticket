@@ -3,7 +3,10 @@ package entidad;
 import java.util.Date;
 
 /**
- *
+ * Entidad de dominio que representa a un cliente registrado en el sistema.
+ * Mapea directamente la estructura de los datos del usuario en la base de datos, 
+ * incluyendo sus credenciales de acceso y su información personal básica.
+ * 
  * @author gaelc
  */
 public class ClienteEntidad {
@@ -18,7 +21,7 @@ public class ClienteEntidad {
 
     public ClienteEntidad() {
     }
-//inserciones
+
     public ClienteEntidad(String usuario, String contrasena, String nombre, String apellidoPaterno, String apellidoMaterno, Date fechaNacimiento) {
         this.usuario = usuario;
         this.contrasena = contrasena;
@@ -28,7 +31,6 @@ public class ClienteEntidad {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    //consultas
     public ClienteEntidad(int idCliente, String usuario, String contrasena, String nombre, String apellidoPaterno, String apellidoMaterno, Date fechaNacimiento) {
         this.idCliente = idCliente;
         this.usuario = usuario;
@@ -94,5 +96,4 @@ public class ClienteEntidad {
     public void setFechaNacimiento(Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
-
 }

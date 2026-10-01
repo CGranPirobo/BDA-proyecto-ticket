@@ -1,5 +1,14 @@
 package dtos;
 
+/**
+ * Objeto de transferencia de datos (DTO) que representa la información de
+ * una cuenta bancaria personal asociada a un cliente.
+ * Se utiliza para enviar los datos de la cuenta desde la interfaz gráfica 
+ * hasta la capa de persistencia para su registro o consulta.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class CuentaPersonalDTO {
 
     private int idCuentaPersonal;
@@ -8,7 +17,6 @@ public class CuentaPersonalDTO {
     private double saldo;
     private int idCliente;
 
-    // Constructor 1: Usado al consultar cuentas desde la base de datos (CON ID)
     public CuentaPersonalDTO(int idCuentaPersonal, String banco, String numeroCuenta, double saldo, int idCliente) {
         this.idCuentaPersonal = idCuentaPersonal;
         this.banco = banco;
@@ -17,7 +25,6 @@ public class CuentaPersonalDTO {
         this.idCliente = idCliente;
     }
 
-    // Constructor 2: Usado en ConfigurarCuentaFrame para registrar (SIN ID)
     public CuentaPersonalDTO(String banco, String numeroCuenta, double saldo, int idCliente) {
         this.banco = banco;
         this.numeroCuenta = numeroCuenta;

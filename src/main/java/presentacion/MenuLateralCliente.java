@@ -34,8 +34,15 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
-
+/**
+ * Clase utilitaria encargada de instalar e inyectar un menú lateral de navegación 
+ * y una barra superior común en las diferentes ventanas (JFrame) orientadas al cliente.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class MenuLateralCliente {
+    
     private static final int ANCHO_MENU = 300;
     private static final int ALTO_BARRA = 64;
     private static final int ALTO_MINIMO = 600;
@@ -47,9 +54,19 @@ public class MenuLateralCliente {
     private static final Color COLOR_GRIS = new Color(110, 110, 110);
     private static final Color COLOR_ROJO = new Color(230, 0, 0);
  
+    /**
+     * Constructor privado para evitar la instanciación de esta clase utilitaria.
+     */
     private MenuLateralCliente() {
     }
  
+    /**
+     * Instala el menú lateral y la barra superior en la ventana principal especificada 
+     * a partir del cliente en sesión.
+     * 
+     * @param frame Ventana de destino donde se acoplará el menú.
+     * @param cliente Datos del cliente autenticado.
+     */
     public static void instalar(JFrame frame, ClienteDTO cliente) {
         Container original = frame.getContentPane();
         Color fondoOriginal = original.getBackground();
@@ -65,14 +82,20 @@ public class MenuLateralCliente {
         centro.add(original, BorderLayout.CENTER);
         raiz.add(centro, BorderLayout.CENTER);
  
-        // La ventana crece para que el contenido original conserve su tamaño
         Dimension d = frame.getSize();
         frame.setSize(d.width + ANCHO_MENU, Math.max(d.height + ALTO_BARRA, ALTO_MINIMO));
         frame.setLocationRelativeTo(null);
     }
  
-    // ---------- Barra superior: hamburguesa, logo y nombre del cliente ----------
- 
+    /**
+     * Crea la barra superior que incluye el botón de menú hamburguesa, el logotipo y la información del usuario.
+     * 
+     * @param frame Ventana contenedora.
+     * @param menu Panel del menú lateral.
+     * @param cliente Datos del cliente en sesión.
+     * @param fondo Color de fondo original de la ventana.
+     * @return JPanel que representa la barra superior.
+     */
     private static JPanel crearBarra(JFrame frame, JPanel menu, ClienteDTO cliente, Color fondo) {
         JPanel barra = new JPanel(new BorderLayout());
         barra.setBackground(fondo);
@@ -115,15 +138,19 @@ public class MenuLateralCliente {
         return barra;
     }
  
-    // ---------- Menú lateral ----------
- 
+    /**
+     * Construye y organiza el panel del menú lateral con las diferentes opciones de navegación del cliente.
+     * 
+     * @param frame Ventana contenedora.
+     * @param cliente Datos del cliente en sesión.
+     * @return JPanel que representa el menú lateral.
+     */
     private static JPanel crearMenu(JFrame frame, ClienteDTO cliente) {
         JPanel menu = new JPanel(new BorderLayout());
         menu.setBackground(COLOR_FONDO_MENU);
         menu.setPreferredSize(new Dimension(ANCHO_MENU, 0));
         menu.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, COLOR_LINEA));
  
-        // Encabezado "Menu" con una línea debajo
         JLabel lblMenu = new JLabel("Menu");
         lblMenu.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblMenu.setForeground(COLOR_NEGRO);
@@ -134,7 +161,6 @@ public class MenuLateralCliente {
         cabecera.add(crearLinea(), BorderLayout.SOUTH);
         menu.add(cabecera, BorderLayout.NORTH);
  
-        // Opciones (con scroll por si la ventana es baja)
         JPanel lista = new JPanel();
         lista.setOpaque(false);
         lista.setLayout(new BoxLayout(lista, BoxLayout.Y_AXIS));
@@ -162,7 +188,6 @@ public class MenuLateralCliente {
         scroll.getVerticalScrollBar().setUnitIncrement(16);
         menu.add(scroll, BorderLayout.CENTER);
  
-        // Pie: icono de usuario + botón rojo de cerrar sesión
         JPanel pie = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
         pie.setOpaque(false);
         pie.setBorder(BorderFactory.createEmptyBorder(15, 20, 20, 20));
@@ -178,6 +203,11 @@ public class MenuLateralCliente {
         return menu;
     }
  
+    /**
+     * Crea un panel divisor horizontal estilizado como línea de separación.
+     * 
+     * @return JPanel con dimensiones de línea divisoria.
+     */
     private static JPanel crearLinea() {
         JPanel linea = new JPanel();
         linea.setBackground(COLOR_LINEA);
@@ -185,6 +215,16 @@ public class MenuLateralCliente {
         return linea;
     }
  
+    /**
+     * Agrega una opción de navegación individual al menú lateral.
+     * 
+     * @param lista Panel contenedor de opciones.
+     * @param frame Ventana actual.
+     * @param titulo Título de la opción.
+     * @param descripcion Descripción breve de la sección.
+     * @param destino Clase del JFrame de destino.
+     * @param fabrica Función constructora de la ventana de destino.
+     */
     private static void agregarOpcion(JPanel lista, JFrame frame, String titulo, String descripcion,
             Class<?> destino, Supplier<? extends JFrame> fabrica) {
         JPanel fila = new JPanel(new BorderLayout(14, 0));
@@ -214,7 +254,6 @@ public class MenuLateralCliente {
         textos.add(lblDescripcion);
         fila.add(textos, BorderLayout.CENTER);
  
-        // La fila ocupa todo el ancho pero solo el alto que necesita
         fila.setMaximumSize(new Dimension(Integer.MAX_VALUE, fila.getPreferredSize().height));
  
         fila.addMouseListener(new MouseAdapter() {
@@ -238,7 +277,13 @@ public class MenuLateralCliente {
         lista.add(Box.createRigidArea(new Dimension(0, 6)));
     }
  
-    /** Abre la pantalla elegida y cierra la actual (si ya estás en ella, no hace nada). */
+    /**
+     * Abre la pantalla elegida y cierra la actual, omitiendo la acción si ya se encuentra en ella.
+     * 
+     * @param actual Ventana actual.
+     * @param destino Clase del JFrame de destino.
+     * @param fabrica Proveedor de la instancia del nuevo JFrame.
+     */
     private static void navegar(JFrame actual, Class<?> destino, Supplier<? extends JFrame> fabrica) {
         if (actual.getClass() == destino) {
             return;
@@ -247,6 +292,12 @@ public class MenuLateralCliente {
         actual.dispose();
     }
  
+    /**
+     * Crea y configura el botón de cerrar sesión ubicado en la parte inferior del menú lateral.
+     * 
+     * @param frame Ventana actual.
+     * @return JButton configurado.
+     */
     private static JButton crearBotonCerrarSesion(JFrame frame) {
         JButton boton = new JButton("Cerrar sesion") {
             @Override
@@ -271,13 +322,18 @@ public class MenuLateralCliente {
         return boton;
     }
  
+    /**
+     * Gestiona el cierre de sesión del usuario tras confirmar la acción, 
+     * redirigiendo al login y cerrando el resto de ventanas activas.
+     * 
+     * @param actual Ventana actual desde donde se solicita el cierre de sesión.
+     */
     private static void cerrarSesion(JFrame actual) {
         int confirmacion = JOptionPane.showConfirmDialog(actual, "¿Cerrar sesión?", "Salir",
                 JOptionPane.YES_NO_OPTION);
         if (confirmacion == JOptionPane.YES_OPTION) {
             LoginFrame login = new LoginFrame();
             login.setVisible(true);
-            // Cierra cualquier otra ventana que haya quedado abierta de la sesión
             for (Window ventana : Window.getWindows()) {
                 if (ventana != login && ventana.isDisplayable()) {
                     ventana.dispose();
@@ -286,8 +342,9 @@ public class MenuLateralCliente {
         }
     }
  
-    // ---------- Iconos dibujados con Java2D ----------
- 
+    /**
+     * Componente interno para dibujar iconos vectoriales mediante Java2D.
+     */
     private static class Icono extends JComponent {
  
         enum Tipo { ESTRELLA, MENU, USUARIO }

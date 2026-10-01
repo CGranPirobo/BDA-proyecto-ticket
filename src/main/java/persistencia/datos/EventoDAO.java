@@ -13,38 +13,61 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Clase de acceso a datos (DAO) para la entidad Evento.
+ * Gestiona el registro de eventos, la distribución de ingresos en cuentas 
+ * asociadas (reparto), las actualizaciones de información y las consultas 
+ * estadísticas de boletos y montos vendidos.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class EventoDAO implements IEventoDAO {
 
     private final IConexion conexion;
 
+    /**
+     * Inicializa el DAO con el proveedor de conexiones.
+     * 
+     * @param conexion Objeto que provee la conexión a la base de datos.
+     */
     public EventoDAO(IConexion conexion) {
         this.conexion = conexion;
     }
 
-    
-    //Guarda el evento y su reparto de ingresos.
+    /**
+     * Registra un nuevo evento y su respectivo reparto de ingresos en una 
+     * transacción atómica (commit/rollback).
+     * 
+     * @param evento La entidad EventoEntidad que contiene los datos y las cuentas asignadas.
+     * @return El ID generado para el nuevo evento.
+     * @throws PersistenciaException Si ocurre un error al insertar el evento o el reparto.
+     */
     @Override
     public int insertar(EventoEntidad evento) throws PersistenciaException {
         try (Connection conexionBD = conexion.crearConexion()) {
             conexionBD.setAutoCommit(false);
- 
             try {
                 int idEvento = insertarEvento(conexionBD, evento);
-                insertarReparto(conexionBD, evento.getIdCuenta(), idEvento);
+                insertarReparto(conexionBD, evento.getIdsCuentas(), idEvento);
                 conexionBD.commit();
                 return idEvento;
- 
             } catch (SQLException e) {
-                conexionBD.rollback(); // si algo falló, se deshace todo
+                conexionBD.rollback();
                 throw e;
             }
- 
         } catch (Exception e) {
             throw new PersistenciaException("Error al registrar el evento.", e);
         }
     }
-    //lista los eventos de una empresa. El evento guarda el administrador
-     // que lo creó, y ese administrador pertenece a una empresa, por eso el JOIN.
+
+    /**
+     * Lista todos los eventos creados por los administradores pertenecientes a una empresa específica.
+     * 
+     * @param idEmpresa ID de la empresa a consultar.
+     * @return Lista de entidades EventoEntidad ordenadas por fecha.
+     * @throws PersistenciaException Si ocurre un error durante la consulta SQL.
+     */
     @Override
     public List<EventoEntidad> listarPorEmpresa(int idEmpresa) throws PersistenciaException {
         String sql = "SELECT e.idEvento, e.nombre, e.descripcion, e.edadMinima, e.cantidadMaximaBoletos, "
@@ -52,67 +75,86 @@ public class EventoDAO implements IEventoDAO {
                 + "FROM evento e "
                 + "INNER JOIN administrador_evento a ON e.idAdministrador = a.idAdministrador "
                 + "WHERE a.idEmpresa = ? ORDER BY e.fechaHora";
- 
-        try (Connection conexionBD = conexion.crearConexion();
-                PreparedStatement comando = conexionBD.prepareStatement(sql)) {
- 
+
+        try (Connection conexionBD = conexion.crearConexion(); 
+             PreparedStatement comando = conexionBD.prepareStatement(sql)) {
+
             comando.setInt(1, idEmpresa);
             try (ResultSet rs = comando.executeQuery()) {
                 return leerEventos(rs);
             }
- 
+
         } catch (Exception e) {
             throw new PersistenciaException("Error al consultar los eventos de la empresa.", e);
         }
     }
 
+    /**
+     * Cuenta la cantidad de boletos que han sido vendidos efectivamente para un evento.
+     * 
+     * @param idEvento ID del evento a consultar.
+     * @return Número total de boletos con estatus 'comprado'.
+     * @throws PersistenciaException Si ocurre un error en la base de datos.
+     */
     @Override
     public int contarBoletosVendidos(int idEvento) throws PersistenciaException {
         String sql = "SELECT COUNT(*) FROM detalles_boleto d "
                 + "INNER JOIN boleto b ON d.idBoleto = b.idBoleto "
                 + "WHERE b.idEvento = ? AND d.estatus = 'comprado'";
- 
-        try (Connection conexionBD = conexion.crearConexion();
-                PreparedStatement comando = conexionBD.prepareStatement(sql)) {
- 
+
+        try (Connection conexionBD = conexion.crearConexion(); 
+             PreparedStatement comando = conexionBD.prepareStatement(sql)) {
+
             comando.setInt(1, idEvento);
- 
+
             try (ResultSet rs = comando.executeQuery()) {
                 return rs.next() ? rs.getInt(1) : 0;
             }
- 
+
         } catch (Exception e) {
             throw new PersistenciaException("Error al consultar los boletos vendidos del evento.", e);
         }
     }
 
+    /**
+     * Lista todos los eventos registrados en el sistema.
+     * 
+     * @return Lista completa de entidades EventoEntidad.
+     * @throws PersistenciaException Si ocurre un error al consultar la base de datos.
+     */
     @Override
     public List<EventoEntidad> listarEventos() throws PersistenciaException {
         String sql = "SELECT idEvento, nombre, descripcion, edadMinima, cantidadMaximaBoletos, tipo, "
                 + "fechaHora, calle, colonia, numero, estado, ciudad, idAdministrador FROM evento";
- 
-        try (Connection conexionBD = conexion.crearConexion();
-                PreparedStatement comando = conexionBD.prepareStatement(sql);
-                ResultSet rs = comando.executeQuery()) {
- 
+
+        try (Connection conexionBD = conexion.crearConexion(); 
+             PreparedStatement comando = conexionBD.prepareStatement(sql); 
+             ResultSet rs = comando.executeQuery()) {
+
             return leerEventos(rs);
- 
+
         } catch (Exception e) {
             throw new PersistenciaException("Error al consultar los eventos disponibles.", e);
         }
     }
-    
-    
-    //Inserta la fila del evento y regresa el ID que generó la base de datos.
+
+    /**
+     * Inserta los datos principales de la entidad evento y retorna su ID generado.
+     * 
+     * @param conexionBD Conexión activa de la transacción.
+     * @param evento La entidad con los datos del evento.
+     * @return ID del evento insertado.
+     * @throws SQLException Si ocurre un error en el comando SQL.
+     */
     private int insertarEvento(Connection conexionBD, EventoEntidad evento) throws SQLException {
         String sql = "INSERT INTO evento (nombre, descripcion, edadMinima, cantidadMaximaBoletos, "
                 + "tipo, fechaHora, calle, colonia, numero, estado, ciudad, idAdministrador) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
- 
+
         try (PreparedStatement comando = conexionBD.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             asignarParametrosInsertar(comando, evento);
             comando.executeUpdate();
- 
+
             try (ResultSet rs = comando.getGeneratedKeys()) {
                 if (!rs.next()) {
                     throw new SQLException("No se obtuvo el ID del evento creado.");
@@ -121,48 +163,75 @@ public class EventoDAO implements IEventoDAO {
             }
         }
     }
-    
-    //Inserta en reparte_ingreso la cuenta que recibe el dinero del evento.
-    private void insertarReparto(Connection conexionBD, int idCuenta, int idEvento) throws SQLException {
+
+    /**
+     * Inserta las relaciones de reparto de ingresos entre el evento y sus cuentas bancarias asignadas.
+     * 
+     * @param conexionBD Conexión activa de la transacción.
+     * @param idsCuentas Lista de IDs de cuentas que recibirán fondos.
+     * @param idEvento ID del evento asociado.
+     * @throws SQLException Si ocurre un error al insertar en la tabla de distribución.
+     */
+    private void insertarReparto(Connection conexionBD, List<Integer> idsCuentas, int idEvento) throws SQLException {
         String sql = "INSERT INTO reparte_ingreso (idCuenta, idEvento, porcentaje) VALUES (?, ?, ?)";
- 
+        double porcentaje = 100.0 / idsCuentas.size(); 
         try (PreparedStatement comando = conexionBD.prepareStatement(sql)) {
-            comando.setInt(1, idCuenta);
-            comando.setInt(2, idEvento);
-            comando.setDouble(3, 100.0); // toda la venta va a esta cuenta
-            comando.executeUpdate();
+            for (Integer idCuenta : idsCuentas) {
+                comando.setInt(1, idCuenta);
+                comando.setInt(2, idEvento);
+                comando.setDouble(3, porcentaje);
+                comando.executeUpdate();
+            }
         }
     }
-    
+
     /**
-     * NUEVO: actualiza un evento. No se actualizan cantidadMaximaBoletos ni
-     * idAdministrador, porque no se deben modificar una vez creado el evento.
+     * Actualiza la información de un evento existente y reinicia las cuentas 
+     * asociadas a su reparto de ingresos de manera transaccional.
+     * 
+     * @param evento La entidad EventoEntidad con los datos actualizados.
+     * @throws PersistenciaException Si el evento no existe o hay un error de base de datos.
      */
     @Override
     public void actualizar(EventoEntidad evento) throws PersistenciaException {
-        String sql = "UPDATE evento SET nombre = ?, descripcion = ?, edadMinima = ?, tipo = ?, "
+        String sqlUpdate = "UPDATE evento SET nombre = ?, descripcion = ?, edadMinima = ?, tipo = ?, "
                 + "fechaHora = ?, calle = ?, colonia = ?, numero = ?, estado = ?, ciudad = ? "
                 + "WHERE idEvento = ?";
- 
-        try (Connection conexionBD = conexion.crearConexion();
-                PreparedStatement comando = conexionBD.prepareStatement(sql)) {
- 
-            asignarParametrosActualizar(comando, evento);
- 
-            // executeUpdate regresa cuántas filas cambió; si es 0, el evento no existe
-            if (comando.executeUpdate() == 0) {
-                throw new PersistenciaException("No se encontró el evento que se quiere modificar.");
+        String sqlDeleteRepartos = "DELETE FROM reparte_ingreso WHERE idEvento = ?";
+
+        try (Connection conexionBD = conexion.crearConexion()) {
+            conexionBD.setAutoCommit(false); 
+            try (PreparedStatement comando = conexionBD.prepareStatement(sqlUpdate); 
+                 PreparedStatement psDelete = conexionBD.prepareStatement(sqlDeleteRepartos)) {
+
+                asignarParametrosActualizar(comando, evento);
+                if (comando.executeUpdate() == 0) {
+                    throw new PersistenciaException("No se encontró el evento que se quiere modificar.");
+                }
+
+                psDelete.setInt(1, evento.getIdEvento());
+                psDelete.executeUpdate();
+                insertarReparto(conexionBD, evento.getIdsCuentas(), evento.getIdEvento());
+
+                conexionBD.commit();
+            } catch (SQLException ex) {
+                conexionBD.rollback();
+                throw ex;
             }
- 
         } catch (PersistenciaException e) {
             throw e;
         } catch (Exception e) {
             throw new PersistenciaException("Error al modificar el evento.", e);
         }
     }
-    
-    //Recorre el resultado de una consulta y arma la lista de eventos.
-    //Si no hay filas regresa una lista vacía 
+
+    /**
+     * Recorre un ResultSet para transformar los registros en una lista de entidades EventoEntidad.
+     * 
+     * @param rs ResultSet con los resultados de la consulta.
+     * @return Lista de entidades de eventos.
+     * @throws SQLException Si ocurre un error al leer los datos.
+     */
     private List<EventoEntidad> leerEventos(ResultSet rs) throws SQLException {
         List<EventoEntidad> lista = new ArrayList<>();
         while (rs.next()) {
@@ -170,9 +239,14 @@ public class EventoDAO implements IEventoDAO {
         }
         return lista;
     }
-    
-    
-    //Convierte la fila actual del ResultSet en un EventoEntidad.
+
+    /**
+     * Mapea una fila actual del ResultSet a un objeto EventoEntidad.
+     * 
+     * @param rs ResultSet posicionado en la fila a mapear.
+     * @return La entidad EventoEntidad creada.
+     * @throws SQLException Si ocurre un error al extraer las columnas.
+     */
     private EventoEntidad mapearEvento(ResultSet rs) throws SQLException {
         EventoEntidad evento = new EventoEntidad();
         evento.setIdEvento(rs.getInt("idEvento"));
@@ -190,8 +264,14 @@ public class EventoDAO implements IEventoDAO {
         evento.setIdAdministrador(rs.getInt("idAdministrador"));
         return evento;
     }
-    
-    //Llena los 12 parámetros del INSERT del evento (en el mismo orden del SQL).
+
+    /**
+     * Asigna los parámetros correspondientes para ejecutar una sentencia SQL de inserción de evento.
+     * 
+     * @param comando PreparedStatement configurado para la inserción.
+     * @param evento Entidad con los datos a asignar.
+     * @throws SQLException Si ocurre un error al establecer los parámetros.
+     */
     private void asignarParametrosInsertar(PreparedStatement comando, EventoEntidad evento) throws SQLException {
         comando.setString(1, evento.getNombre());
         comando.setString(2, evento.getDescripcion());
@@ -206,9 +286,14 @@ public class EventoDAO implements IEventoDAO {
         comando.setString(11, evento.getCiudad());
         comando.setInt(12, evento.getIdAdministrador());
     }
-    
-    
-    //Llena los 11 parámetros del UPDATE del evento (en el mismo orden del SQL).
+
+    /**
+     * Asigna los parámetros correspondientes para ejecutar una sentencia SQL de actualización de evento.
+     * 
+     * @param comando PreparedStatement configurado para la actualización.
+     * @param evento Entidad con los datos nuevos.
+     * @throws SQLException Si ocurre un error al establecer los parámetros.
+     */
     private void asignarParametrosActualizar(PreparedStatement comando, EventoEntidad evento) throws SQLException {
         comando.setString(1, evento.getNombre());
         comando.setString(2, evento.getDescripcion());
@@ -221,16 +306,23 @@ public class EventoDAO implements IEventoDAO {
         comando.setString(9, evento.getEstado());
         comando.setString(10, evento.getCiudad());
         comando.setInt(11, evento.getIdEvento());
-    } 
+    }
 
+    /**
+     * Calcula el monto económico total obtenido por la venta de boletos de un evento.
+     * 
+     * @param idEvento ID del evento a consultar.
+     * @return El total monetario recaudado.
+     * @throws PersistenciaException Si ocurre un error durante la consulta SQL.
+     */
     @Override
     public double obtenerMontoVendido(int idEvento) throws PersistenciaException {
         String sql = "SELECT COALESCE(SUM(d.precio_pagado), 0) FROM detalles_boleto d "
                 + "INNER JOIN boleto b ON d.idBoleto = b.idBoleto "
                 + "WHERE b.idEvento = ? AND d.estatus = 'comprado'";
 
-        try (Connection conexionBD = conexion.crearConexion();
-                PreparedStatement comando = conexionBD.prepareStatement(sql)) {
+        try (Connection conexionBD = conexion.crearConexion(); 
+             PreparedStatement comando = conexionBD.prepareStatement(sql)) {
 
             comando.setInt(1, idEvento);
 
@@ -241,5 +333,30 @@ public class EventoDAO implements IEventoDAO {
         } catch (Exception e) {
             throw new PersistenciaException("Error al consultar el monto vendido del evento.", e);
         }
+    }
+    
+    /**
+     * Obtiene los identificadores de las cuentas bancarias asociadas al reparto de ingresos de un evento.
+     * 
+     * @param idEvento ID del evento.
+     * @return Lista de enteros con los IDs de las cuentas vinculadas.
+     * @throws PersistenciaException Si ocurre un error al consultar las cuentas.
+     */
+    @Override
+    public List<Integer> obtenerCuentasPorEvento(int idEvento) throws PersistenciaException {
+        List<Integer> cuentas = new ArrayList<>();
+        String sql = "SELECT idCuenta FROM reparte_ingreso WHERE idEvento = ?";
+        try (Connection con = conexion.crearConexion(); 
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idEvento);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    cuentas.add(rs.getInt("idCuenta"));
+                }
+            }
+        } catch (Exception e) {
+            throw new PersistenciaException("Error al cargar las cuentas del evento.", e);
+        }
+        return cuentas;
     }
 }

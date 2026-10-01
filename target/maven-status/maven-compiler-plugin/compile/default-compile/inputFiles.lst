@@ -1,27 +1,78 @@
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\com\mycompany\proyectotuticket\ProyectoTuTicket.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\dtos\AdministradorDTO.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\dtos\ClienteDTO.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\dtos\CrearClienteDTO.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\dtos\LoginDTO.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\entidad\AdministradorEntidad.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\entidad\ClienteEntidad.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\entidad\CuentaPersonalEntidad.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\negocio\AdministradorNegocio.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\negocio\ClienteNegocio.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\negocio\IAdministradorNegocio.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\negocio\IClienteNegocio.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\negocio\NegocioException.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\negocio\utilidades\ValidacionCliente.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\negocio\utilidades\ValidadorRegex.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\persistencia\datos\AdministradorDAO.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\persistencia\datos\ClienteDAO.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\persistencia\datos\IAdministradorDAO.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\persistencia\datos\IClienteDAO.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\Persistencias\Conexion.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\Persistencias\IConexion.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\Persistencias\PersistenciaException.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\presentacion\LoginFrame.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\presentacion\MenuAdministradorFrame.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\presentacion\MenuPrincipalFrame.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\presentacion\RegistroClienteFrame.java
-C:\Users\veloz\Downloads\ProyectoTuTicket\src\main\java\presentacion\RegistroClienteFrame2.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\com\mycompany\proyectotuticket\ProyectoTuTicket.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\dtos\AdministradorDTO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\dtos\BoletoCompradoDTO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\dtos\BoletoSeleccionadoDTO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\dtos\ClienteDTO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\dtos\CrearClienteDTO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\dtos\CuentaEmpresaDTO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\dtos\CuentaPersonalDTO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\dtos\EventoDTO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\dtos\FondoCuentaDTO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\dtos\GananciaEventoDTO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\dtos\LoginDTO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\entidad\AdministradorEntidad.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\entidad\ClienteEntidad.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\entidad\CuentaEmpresaEntidad.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\entidad\CuentaPersonalEntidad.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\entidad\EventoEntidad.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\entidad\FondoCuentaEntidad.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\entidad\GananciaEventoEntidad.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\AdministradorNegocio.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\ClienteNegocio.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\CuentaEmpresaNegocio.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\CuentaPersonalNegocio.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\EventoNegocio.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\GananciaNegocio.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\interfaces\IAdministradorNegocio.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\interfaces\IClienteNegocio.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\interfaces\ICuentaEmpresaNegocio.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\interfaces\ICuentaPersonalNegocio.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\interfaces\IEventoNegocio.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\interfaces\IGananciasNegocios.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\NegocioException.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\utilidades\GeneradorBoletoPDF.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\utilidades\validaciones\ValidacionCliente.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\utilidades\validaciones\ValidacionCuentaEmpresa.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\utilidades\validaciones\ValidacionCuentaPersonal.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\utilidades\validaciones\ValidacionEvento.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\negocio\utilidades\validaciones\ValidadorRegex.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\persistencia\datos\AdministradorDAO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\persistencia\datos\ClienteDAO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\persistencia\datos\CompraDAO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\persistencia\datos\CompradoDAO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\persistencia\datos\CuentaPersonalDAO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\persistencia\datos\CuentraEmpresaDAO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\persistencia\datos\EventoDAO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\persistencia\datos\GananciasDAO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\persistencia\datos\interfaces\IAdministradorDAO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\persistencia\datos\interfaces\IClienteDAO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\persistencia\datos\interfaces\ICuentaEmpresaDAO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\persistencia\datos\interfaces\ICuentaPersonalDAO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\persistencia\datos\interfaces\IEventoDAO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\persistencia\datos\interfaces\IGananciasDAO.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\Persistencias\Conexion.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\Persistencias\IConexion.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\Persistencias\PersistenciaException.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\BitacoraFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\CancelarBoletoFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\CompraBoletosFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\ConfigurarCuentaFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\CrearEventoFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\CuentasEmpresa.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\DetalleEventoFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\DetallesPedidoFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\ExplorarEventosFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\GananciasFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\GananciasGeneralesFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\GananciasPorEventoFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\HistorialComprasFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\LoginFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\MenuAdministradorFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\MenuLateraladmin.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\MenuLateralCliente.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\MenuPrincipalFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\MisBoletosFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\ModificarEventoFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\RegistroClienteFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\SaldoCuentaFrame.java
+C:\Users\veloz\Downloads\BDA TICKET\BDA TICKET\BDA-proyecto-ticket\src\main\java\presentacion\SeleccionAsientosFrame.java

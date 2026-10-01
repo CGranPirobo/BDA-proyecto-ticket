@@ -45,25 +45,28 @@ import persistencia.datos.EventoDAO;
 import persistencia.datos.interfaces.ICuentaEmpresaDAO;
 import persistencia.datos.interfaces.IEventoDAO;
 
+/**
+ * Ventana de interfaz gráfica que permite al administrador seleccionar, 
+ * editar y actualizar la información general, ubicación y cuentas bancarias asociadas a un evento existente.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class ModificarEventoFrame extends JFrame {
 
-    //Formato de la fecha al mostrarse
     private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private final AdministradorDTO admin;
     private final IEventoNegocio eventoNegocio;
-    private final ICuentaEmpresaNegocio cuentaNegocio; // Faltaba esto para consultar las cuentas
+    private final ICuentaEmpresaNegocio cuentaNegocio;
     private final List<EventoDTO> eventos = new ArrayList<>();
     
-    // ---- Componentes de la tabla de Eventos ----
     private JTable tablaEventos;
     private DefaultTableModel modeloTabla;
     
-    // ---- Componentes de la tabla de Cuentas ----
     private JTable tablaCuentas;
     private DefaultTableModel modeloCuentas;
     private List<CuentaEmpresaDTO> listaCuentasDisponibles;
     
-    // ---- Componentes del formulario ----
     private JTextField txtNombre;
     private JTextArea txtDescripcion;
     private JComboBox<String> cmbTipo;
@@ -74,6 +77,12 @@ public class ModificarEventoFrame extends JFrame {
     private JButton btnGuardar, btnCerrar;
     private Component[] camposEditables;
 
+    /**
+     * Inicializa la ventana de modificación de eventos vinculada al administrador en sesión, 
+     * configurando las capas de negocio, cargando los eventos de la empresa y la estructura de edición.
+     * 
+     * @param admin Datos del administrador autenticado.
+     */
     public ModificarEventoFrame(AdministradorDTO admin) {
         this.admin = admin;
 
@@ -88,23 +97,31 @@ public class ModificarEventoFrame extends JFrame {
         cargarCuentas();
         cargarEventos();
         habilitarFormulario(false);
+        MenuLateraladmin.instalar(this, admin);
     }
 
+    /**
+     * Configura las propiedades principales de la ventana.
+     */
     private void configurarVentana() {
         setTitle("TuTicket - Modificar Evento");
-        setSize(620, 780); // Ligeramente mas alto para acomodar la tabla de cuentas
+        setSize(620, 780);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
     }
 
+    /**
+     * Inicializa y organiza los componentes visuales de la interfaz, 
+     * incluyendo la tabla de selección de eventos, el formulario de edición con componentes configurados 
+     * y los botones de acción.
+     */
     private void inicializarComponentes() {
         JLabel lblTitulo = new JLabel("Modificar Evento", SwingConstants.CENTER);
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(15, 0, 5, 0));
         add(lblTitulo, BorderLayout.NORTH);
 
-        //---------- Tabla de eventos ----------
         modeloTabla = new DefaultTableModel(new String[]{"ID", "Nombre", "Tipo", "Fecha y hora", "Ciudad"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -126,7 +143,6 @@ public class ModificarEventoFrame extends JFrame {
         scrollTabla.setPreferredSize(new Dimension(0, 140));
         scrollTabla.setBorder(BorderFactory.createTitledBorder("1. Selecciona el evento a modificar"));
 
-        // ---------- Campos del formulario ----------
         txtNombre = new JTextField();
         txtDescripcion = new JTextArea(2, 20);
         txtDescripcion.setLineWrap(true);
@@ -151,7 +167,6 @@ public class ModificarEventoFrame extends JFrame {
         txtCiudad = new JTextField();
         txtEstado = new JTextField();
         
-        // --- CONFIGURACIÓN DE TABLA DE CUENTAS BANCARIAS ---
         modeloCuentas = new DefaultTableModel(new Object[]{"", "Banco", "Numero", "Saldo"}, 0) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
@@ -200,7 +215,6 @@ public class ModificarEventoFrame extends JFrame {
         centro.add(form, BorderLayout.CENTER);
         add(centro, BorderLayout.CENTER);
 
-        // ---------- Botones ----------
         btnGuardar = new JButton("Guardar cambios");
         btnCerrar = new JButton("Cerrar");
         Font fuente = new Font("Segoe UI", Font.PLAIN, 15);
@@ -218,6 +232,10 @@ public class ModificarEventoFrame extends JFrame {
         add(panelBotones, BorderLayout.SOUTH);
     }
     
+    /**
+     * Carga y lista las cuentas bancarias disponibles asociadas a la empresa del administrador, 
+     * mostrando los números de cuenta enmascarados en la tabla correspondiente.
+     */
     private void cargarCuentas() {
         try {
             listaCuentasDisponibles = cuentaNegocio.listarCuentas(admin.getIdEmpresa());
@@ -231,6 +249,14 @@ public class ModificarEventoFrame extends JFrame {
         }
     }
 
+    /**
+     * Agrega una fila de etiqueta y componente de entrada organizada mediante GridBagLayout al formulario.
+     * 
+     * @param panel Panel contenedor del formulario.
+     * @param fila Índice de la fila actual.
+     * @param etiqueta Texto descriptivo de la etiqueta.
+     * @param campo Componente visual interactivo.
+     */
     private void agregarFila(JPanel panel, int fila, String etiqueta, Component campo) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridy = fila;
@@ -248,6 +274,11 @@ public class ModificarEventoFrame extends JFrame {
         panel.add(campo, gbc);
     }
 
+    /**
+     * Construye un subpanel horizontal para los selectores numéricos de fecha (día, mes, año).
+     * 
+     * @return JPanel configurado.
+     */
     private JPanel panelFecha() {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         p.add(spnDia);
@@ -258,6 +289,11 @@ public class ModificarEventoFrame extends JFrame {
         return p;
     }
 
+    /**
+     * Construye un subpanel horizontal para los selectores numéricos de hora (hora, minuto).
+     * 
+     * @return JPanel configurado.
+     */
     private JPanel panelHora() {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         p.add(spnHora);
@@ -266,6 +302,9 @@ public class ModificarEventoFrame extends JFrame {
         return p;
     }
 
+    /**
+     * Consulta y carga la lista de eventos asociados a la empresa del administrador en la tabla principal.
+     */
     private void cargarEventos() {
         eventos.clear();
         try {
@@ -283,11 +322,14 @@ public class ModificarEventoFrame extends JFrame {
         }
     }
 
+    /**
+     * Maneja la selección de un evento en la tabla principal, cargando sus datos en el formulario 
+     * o limpiándolo si no hay selección válida.
+     */
     private void eventoSeleccionado() {
         int fila = tablaEventos.getSelectedRow();
         if (fila < 0) {
             habilitarFormulario(false);
-            // Limpiar checkboxes
             for (int i = 0; i < tablaCuentas.getRowCount(); i++) {
                 tablaCuentas.setValueAt(false, i, 0);
             }
@@ -297,6 +339,11 @@ public class ModificarEventoFrame extends JFrame {
         habilitarFormulario(true);
     }
 
+    /**
+     * Vuelca la información de un objeto DTO de evento en los campos correspondientes del formulario.
+     * 
+     * @param e Objeto DTO del evento a cargar.
+     */
     private void cargarEnFormulario(EventoDTO e) {
         txtNombre.setText(e.getNombre());
         txtDescripcion.setText(e.getDescripcion());
@@ -319,12 +366,16 @@ public class ModificarEventoFrame extends JFrame {
 
         for (int i = 0; i < tablaCuentas.getRowCount(); i++) {
             int idCuentaFila = listaCuentasDisponibles.get(i).getIdCuenta();
-            // Marca el checkbox si la cuenta pertenece a la lista del evento
             boolean seleccionada = e.getIdsCuentas() != null && e.getIdsCuentas().contains(idCuentaFila);
             tablaCuentas.setValueAt(seleccionada, i, 0);
         }
     }
 
+    /**
+     * Habilita o deshabilita los componentes editables del formulario y el botón de guardado.
+     * 
+     * @param habilitado true para habilitar, false para bloquear.
+     */
     private void habilitarFormulario(boolean habilitado) {
         for (Component c : camposEditables) {
             c.setEnabled(habilitado);
@@ -332,6 +383,9 @@ public class ModificarEventoFrame extends JFrame {
         btnGuardar.setEnabled(habilitado);
     }
 
+    /**
+     * Valida y procesa la acción de guardado de los cambios realizados sobre el evento seleccionado.
+     */
     private void guardarCambios() {
         int fila = tablaEventos.getSelectedRow();
         if (fila < 0) {
@@ -355,6 +409,13 @@ public class ModificarEventoFrame extends JFrame {
         }
     }
 
+    /**
+     * Recopila y construye un objeto DTO con la información ingresada en los campos del formulario.
+     * 
+     * @param seleccionado Evento original de referencia.
+     * @return EventoDTO actualizado.
+     * @throws NegocioException Si ocurre algún error en la lectura de los datos.
+     */
     private EventoDTO armarEventoDesdeFormulario(EventoDTO seleccionado) throws NegocioException {
         EventoDTO dto = new EventoDTO();
         dto.setIdEvento(seleccionado.getIdEvento());
@@ -372,7 +433,6 @@ public class ModificarEventoFrame extends JFrame {
         dto.setIdAdministrador(admin.getIdAdministrador());
         dto.setIdEmpresa(admin.getIdEmpresa());
 
-        // --- EXTRACCIÓN DE CUENTAS SELECCIONADAS ---
         List<Integer> cuentasSeleccionadas = new ArrayList<>();
         for (int i = 0; i < tablaCuentas.getRowCount(); i++) {
             boolean isChecked = (boolean) tablaCuentas.getValueAt(i, 0);
@@ -385,6 +445,12 @@ public class ModificarEventoFrame extends JFrame {
         return dto;
     }
 
+    /**
+     * Lee y combina los valores de los selectores numéricos para generar un objeto LocalDateTime válido.
+     * 
+     * @return LocalDateTime resultante.
+     * @throws NegocioException Si la combinación de fecha y hora no existe en el calendario.
+     */
     private LocalDateTime leerFechaHora() throws NegocioException {
         try {
             return LocalDateTime.of(
@@ -398,6 +464,12 @@ public class ModificarEventoFrame extends JFrame {
         }
     }
 
+    /**
+     * Despliega un cuadro de diálogo de confirmación antes de proceder con la modificación del evento.
+     * 
+     * @param seleccionado Evento a modificar.
+     * @return true si el usuario confirma, false en caso contrario.
+     */
     private boolean confirmarGuardado(EventoDTO seleccionado) {
         int respuesta = JOptionPane.showConfirmDialog(this,
                 "¿Guardar los cambios del evento \"" + seleccionado.getNombre() + "\"?",

@@ -11,18 +11,37 @@ import java.util.ArrayList;
 import java.util.List;
 import persistencia.datos.interfaces.IGananciasDAO;
 
-
-public class GananciasDAO implements IGananciasDAO{
+/**
+ * Clase de acceso a datos (DAO) encargada de consultar las métricas financieras, 
+ * incluyendo las ganancias por evento y los fondos distribuidos por cuenta bancaria 
+ * para las empresas.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
+public class GananciasDAO implements IGananciasDAO {
     
     private final IConexion conexion;
  
+    /**
+     * Inicializa el DAO con el proveedor de conexiones.
+     * 
+     * @param conexion Objeto encargado de proveer la conexión a la base de datos.
+     */
     public GananciasDAO(IConexion conexion) {
         this.conexion = conexion;
     }
 
+    /**
+     * Consulta y lista el rendimiento financiero y de asistencia por cada evento 
+     * perteneciente a una empresa. Solo considera los boletos con estatus 'comprado'.
+     * 
+     * @param idEmpresa ID de la empresa cuyos eventos se van a auditar.
+     * @return Lista de entidades GananciaEventoEntidad con los datos de ventas e ingresos.
+     * @throws PersistenciaException Si ocurre un error al ejecutar la consulta SQL.
+     */
     @Override
     public List<GananciaEventoEntidad> listarGananciasPorEvento(int idEmpresa) throws PersistenciaException {
-        // Solo cuentan los boletos 'comprado'; los cancelados no suman ni en vendidos ni en ingresos.
         String sql = "SELECT e.nombre, e.cantidadMaximaBoletos, "
                 + "COUNT(d.idDetalles) AS vendidos, COALESCE(SUM(d.precio_pagado), 0) AS ingresos "
                 + "FROM evento e "
@@ -35,7 +54,7 @@ public class GananciasDAO implements IGananciasDAO{
         List<GananciaEventoEntidad> lista = new ArrayList<>();
  
         try (Connection conexionBD = conexion.crearConexion();
-                PreparedStatement comando = conexionBD.prepareStatement(sql)) {
+             PreparedStatement comando = conexionBD.prepareStatement(sql)) {
  
             comando.setInt(1, idEmpresa);
  
@@ -56,9 +75,16 @@ public class GananciasDAO implements IGananciasDAO{
         }
     }
  
+    /**
+     * Consulta los fondos acumulados en cada cuenta bancaria de la empresa 
+     * calculados a partir de la distribución de ingresos (reparte_ingreso) de los eventos.
+     * 
+     * @param idEmpresa ID de la empresa a consultar.
+     * @return Lista de entidades FondoCuentaEntidad con el desglose por cuenta.
+     * @throws PersistenciaException Si ocurre un error al consultar la base de datos.
+     */
     @Override
     public List<FondoCuentaEntidad> listarFondosPorCuenta(int idEmpresa) throws PersistenciaException {
-        // Ingresos de cada evento repartidos según el porcentaje de reparte_ingreso.
         String sql = "SELECT c.banco, c.No_Cuenta, "
                 + "COALESCE(SUM(ing.ingresos * r.porcentaje / 100), 0) AS fondos "
                 + "FROM cuenta_empresa c "
@@ -74,7 +100,7 @@ public class GananciasDAO implements IGananciasDAO{
         List<FondoCuentaEntidad> lista = new ArrayList<>();
  
         try (Connection conexionBD = conexion.crearConexion();
-                PreparedStatement comando = conexionBD.prepareStatement(sql)) {
+             PreparedStatement comando = conexionBD.prepareStatement(sql)) {
  
             comando.setInt(1, idEmpresa);
  

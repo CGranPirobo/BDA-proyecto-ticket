@@ -1,10 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dtos;
 
 /**
+ * Objeto de transferencia de datos (DTO) que encapsula las credenciales 
+ * de autenticación de un usuario.
+ * Se utiliza para transportar el nombre de usuario y la contraseña desde 
+ * la interfaz de inicio de sesión hacia la capa de negocio para su verificación.
  *
  * @author M-14
  */

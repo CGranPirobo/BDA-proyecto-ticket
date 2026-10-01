@@ -7,6 +7,15 @@ import dtos.LoginDTO;
 import entidad.AdministradorEntidad;
 import persistencia.datos.interfaces.IAdministradorDAO;
 
+/**
+ * Clase de la capa de negocio que gestiona las operaciones relacionadas 
+ * con los administradores del sistema.
+ * Se encarga de procesar la lógica de autenticación y de transformar las 
+ * entidades devueltas por la capa de persistencia en objetos DTO para la capa de presentación.
+ * 
+ * @author M-14
+ * @author gaelc
+ */
 public class AdministradorNegocio implements IAdministradorNegocio {
     
     private final IAdministradorDAO adminDAO;
@@ -21,7 +30,6 @@ public class AdministradorNegocio implements IAdministradorNegocio {
             AdministradorEntidad entidad = adminDAO.login(loginDTO.getUsuario(), loginDTO.getContrasena());
             
             if (entidad == null) {
-                // Si el DAO devuelve null, lanzamos el error para que el LoginFrame lo atrape
                 throw new NegocioException("Credenciales de administrador inválidas.");
             }
 

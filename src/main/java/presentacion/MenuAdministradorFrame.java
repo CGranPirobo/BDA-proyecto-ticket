@@ -7,6 +7,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Path2D;
 
+/**
+ * Ventana de interfaz gráfica que representa el panel principal de administración (promotora), 
+ * integrando un menú lateral deslizante, accesos rápidos a gestión de eventos, finanzas y bitácora.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class MenuAdministradorFrame extends JFrame {
 
     private static final Color COLOR_FONDO = new Color(217, 217, 217);
@@ -27,12 +34,20 @@ public class MenuAdministradorFrame extends JFrame {
     private final AdministradorDTO admin;
     private JPanel panelMenu;
 
+    /**
+     * Inicializa el panel de administración vinculado al administrador autenticado.
+     * 
+     * @param admin Datos del administrador en sesión.
+     */
     public MenuAdministradorFrame(AdministradorDTO admin) {
         this.admin = admin;
         configurarVentana();
         inicializarComponentes();
     }
 
+    /**
+     * Configura las propiedades principales de la ventana.
+     */
     private void configurarVentana() {
         setTitle("TuTicket - Panel de Administración");
         setSize(980, 620);
@@ -41,89 +56,20 @@ public class MenuAdministradorFrame extends JFrame {
         setResizable(false);
         setLayout(new BorderLayout(10, 10));
     }
-
-    /*private void inicializarComponentes() {
-        // Título superior
-        JLabel lblTitulo = new JLabel("Panel de Administración", SwingConstants.CENTER);
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        lblTitulo.setForeground(new Color(40, 40, 40)); // Un tono un poco más oscuro
-        lblTitulo.setBorder(BorderFactory.createEmptyBorder(25, 0, 10, 0));
-        add(lblTitulo, BorderLayout.NORTH);
-
-        // Panel central con BoxLayout para apilar los botones verticalmente
-        JPanel panelBotones = new JPanel();
-        panelBotones.setLayout(new BoxLayout(panelBotones, BoxLayout.Y_AXIS));
-        panelBotones.setBorder(BorderFactory.createEmptyBorder(10, 80, 40, 80));
-
-        // Inicializar botones
-        btnCrearEvento = new JButton("Crear Nuevo Evento");
-        btnConfigurarCuentas = new JButton("Configurar Cuentas Bancarias");
-        btnCerrarSesion = new JButton("Cerrar Sesión");
-        btnModificarEvento = new JButton("Modificar un Evento");
-        btnGanancias = new JButton("Ver Ganancias");
-        btnBitacora = new JButton("Bitacora");
-
-        // Ajuste de fuentes y cursores
-        Font fuenteBotones = new Font("Segoe UI", Font.PLAIN, 16);
-        JButton[] botones = {btnCrearEvento, btnConfigurarCuentas, btnCerrarSesion, btnModificarEvento, btnGanancias, btnBitacora};
-
-        for (JButton boton : botones) {
-            boton.setFont(fuenteBotones);
-            boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            boton.setAlignmentX(Component.CENTER_ALIGNMENT);
-            boton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40)); // Que ocupen el ancho disponible
-        }
-
-        // Acciones
-        btnCrearEvento.addActionListener(e -> {
-            new CrearEventoFrame(admin).setVisible(true);
-        });
-
-        btnModificarEvento.addActionListener(e -> {
-            new ModificarEventoFrame(admin).setVisible(true);
-        });
-
-        btnConfigurarCuentas.addActionListener(e -> {
-            new CuentasEmpresa(admin).setVisible(true);
-        });
-
-        btnGanancias.addActionListener(e -> {
-            new GananciasFrame(admin).setVisible(true);
-        });
-
-        btnBitacora.addActionListener(e -> new BitacoraFrame(admin).setVisible(true));
-
-        btnCerrarSesion.addActionListener(e -> {
-            int confirmacion = JOptionPane.showConfirmDialog(this, "¿Cerrar la sesión de administrador?", "Cerrar Sesión", JOptionPane.YES_NO_OPTION);
-            if (confirmacion == JOptionPane.YES_OPTION) {
-                new LoginFrame().setVisible(true);
-                this.dispose();
-            }
-        });
-
-        // Ensamblar
-        panelBotones.add(btnCrearEvento);
-        panelBotones.add(Box.createRigidArea(new Dimension(0, 20)));
-        panelBotones.add(btnModificarEvento);
-        panelBotones.add(Box.createRigidArea(new Dimension(0, 20)));
-        panelBotones.add(btnConfigurarCuentas);
-        panelBotones.add(Box.createRigidArea(new Dimension(0, 20)));
-        panelBotones.add(btnGanancias);
-        panelBotones.add(Box.createRigidArea(new Dimension(0, 20)));
-        panelBotones.add(btnBitacora);
-        panelBotones.add(Box.createRigidArea(new Dimension(0, 20)));
-        panelBotones.add(btnCerrarSesion);
-
-        add(panelBotones, BorderLayout.CENTER);
-    }*/
     
+    /**
+     * Inicializa los componentes principales estructurando el menú lateral y el contenido central.
+     */
     private void inicializarComponentes() {
         add(crearMenuLateral(), BorderLayout.WEST);
         add(crearContenido(), BorderLayout.CENTER);
     }
     
-    // ======================= MENÚ LATERAL =======================
- 
+    /**
+     * Crea y configura el panel del menú lateral con las opciones de navegación administrativa.
+     * 
+     * @return JPanel que representa el menú lateral.
+     */
     private JPanel crearMenuLateral() {
         panelMenu = new JPanel(new BorderLayout());
         panelMenu.setBackground(COLOR_FONDO_MENU);
@@ -162,6 +108,14 @@ public class MenuAdministradorFrame extends JFrame {
         return panelMenu;
     }
     
+    /**
+     * Crea una opción interactiva para el menú lateral con título, descripción y acción asociada.
+     * 
+     * @param titulo Título de la opción.
+     * @param descripcion Descripción breve de la funcionalidad.
+     * @param accion Acción a ejecutar al hacer clic.
+     * @return JPanel configurado como opción del menú.
+     */
     private JPanel crearOpcionMenu(String titulo, String descripcion, Runnable accion) {
         JPanel fila = new JPanel(new BorderLayout(14, 0));
         fila.setBackground(COLOR_FONDO_MENU);
@@ -209,7 +163,12 @@ public class MenuAdministradorFrame extends JFrame {
         });
         return fila;
     }
- 
+
+    /**
+     * Crea y estiliza el botón para cerrar sesión ubicado en la parte inferior del menú lateral.
+     * 
+     * @ JButton configurado.
+     */
     private JButton crearBotonCerrarSesion() {
         JButton boton = new JButton("Cerrar sesión") {
             @Override
@@ -234,8 +193,11 @@ public class MenuAdministradorFrame extends JFrame {
         return boton;
     }
     
-    // ======================= CONTENIDO PRINCIPAL =======================
- 
+    /**
+     * Ensambla el panel de contenido principal combinando la barra superior y las tarjetas informativas.
+     * 
+     * @return JPanel de contenido principal.
+     */
     private JPanel crearContenido() {
         JPanel contenido = new JPanel(new BorderLayout());
         contenido.setBackground(COLOR_FONDO);
@@ -243,13 +205,17 @@ public class MenuAdministradorFrame extends JFrame {
         contenido.add(crearPanelPrincipal(), BorderLayout.CENTER);
         return contenido;
     }
- 
+
+    /**
+     * Crea la barra superior con el botón de menú hamburguesa, logotipo y datos del usuario.
+     * 
+     * @return JPanel de la barra superior.
+     */
     private JPanel crearBarraSuperior() {
         JPanel barra = new JPanel(new BorderLayout());
         barra.setOpaque(false);
         barra.setBorder(BorderFactory.createEmptyBorder(18, 25, 10, 30));
  
-        // Botón hamburguesa: muestra u oculta el menú lateral
         Icono hamburguesa = new Icono(Icono.Tipo.MENU, 28, COLOR_NEGRO);
         hamburguesa.setCursor(new Cursor(Cursor.HAND_CURSOR));
         hamburguesa.addMouseListener(new MouseAdapter() {
@@ -279,7 +245,12 @@ public class MenuAdministradorFrame extends JFrame {
  
         return barra;
     }
- 
+
+    /**
+     * Crea el panel principal que contiene los títulos descriptivos y las tarjetas de acceso rápido.
+     * 
+     * @return JPanel principal.
+     */
     private JPanel crearPanelPrincipal() {
         JPanel panel = new JPanel();
         panel.setOpaque(false);
@@ -313,7 +284,12 @@ public class MenuAdministradorFrame extends JFrame {
         panel.add(Box.createVerticalGlue());
         return panel;
     }
- 
+
+    /**
+     * Crea la tarjeta interactiva para modificar eventos existentes.
+     * 
+     * @return JPanel de la tarjeta.
+     */
     private JPanel crearTarjetaModificarEvento() {
         TarjetaRedondeada tarjeta = new TarjetaRedondeada(COLOR_NEGRO, 20);
         tarjeta.setLayout(new BorderLayout());
@@ -332,7 +308,12 @@ public class MenuAdministradorFrame extends JFrame {
         hacerClickeable(tarjeta, this::abrirModificarEvento);
         return tarjeta;
     }
- 
+
+    /**
+     * Crea la tarjeta interactiva para la gestión de cuentas bancarias.
+     * 
+     * @return JPanel de la tarjeta.
+     */
     private JPanel crearTarjetaCuentasBancarias() {
         TarjetaRedondeada tarjeta = new TarjetaRedondeada(COLOR_TARJETA_CLARA, 20);
         tarjeta.setLayout(new BorderLayout());
@@ -358,7 +339,13 @@ public class MenuAdministradorFrame extends JFrame {
         hacerClickeable(tarjeta, this::abrirCuentasBancarias);
         return tarjeta;
     }
- 
+
+    /**
+     * Añade un escuchador de ratón para hacer un componente interactivo y clickeable.
+     * 
+     * @param tarjeta Componente contenedor.
+     * @param accion Acción a ejecutar al hacer clic.
+     */
     private void hacerClickeable(JComponent tarjeta, Runnable accion) {
         tarjeta.setCursor(new Cursor(Cursor.HAND_CURSOR));
         tarjeta.addMouseListener(new MouseAdapter() {
@@ -368,35 +355,59 @@ public class MenuAdministradorFrame extends JFrame {
             }
         });
     }
- 
-    // ======================= ACCIONES =======================
- 
+
+    /**
+     * Alterna la visibilidad del menú lateral (mostrar u ocultar).
+     */
     private void alternarMenu() {
         panelMenu.setVisible(!panelMenu.isVisible());
         getContentPane().revalidate();
         getContentPane().repaint();
     }
- 
+
+    /**
+     * Abre la ventana para la creación de un nuevo evento.
+     */
     private void abrirCrearEvento() {
         new CrearEventoFrame(admin).setVisible(true);
+        this.dispose(); 
     }
- 
+
+    /**
+     * Abre la ventana para modificar eventos existentes.
+     */
     private void abrirModificarEvento() {
         new ModificarEventoFrame(admin).setVisible(true);
+        this.dispose(); 
     }
- 
+
+    /**
+     * Abre la ventana para gestionar las cuentas bancarias de la empresa.
+     */
     private void abrirCuentasBancarias() {
         new CuentasEmpresa(admin).setVisible(true);
+        this.dispose(); 
     }
- 
+
+    /**
+     * Abre el dashboard de ganancias.
+     */
     private void abrirDashboardGanancias() {
         new GananciasFrame(admin).setVisible(true);
+        this.dispose(); 
     }
- 
+
+    /**
+     * Abre la ventana de la bitácora de movimientos.
+     */
     private void abrirBitacora() {
         new BitacoraFrame(admin).setVisible(true);
+        this.dispose(); 
     }
- 
+
+    /**
+     * Gestiona el cierre de sesión de administrador previa confirmación.
+     */
     private void cerrarSesion() {
         int confirmacion = JOptionPane.showConfirmDialog(this,
                 "¿Cerrar la sesión de administrador?", "Cerrar Sesión", JOptionPane.YES_NO_OPTION);
@@ -405,10 +416,10 @@ public class MenuAdministradorFrame extends JFrame {
             this.dispose();
         }
     }
- 
-    // ======================= COMPONENTES DE DIBUJO =======================
- 
-    /** Panel con esquinas redondeadas y una sombra ligera. */
+
+    /**
+     * Clase interna que define un panel con esquinas redondeadas y sombra ligera.
+     */
     private static class TarjetaRedondeada extends JPanel {
  
         private final Color fondo;
@@ -433,7 +444,9 @@ public class MenuAdministradorFrame extends JFrame {
         }
     }
     
-    /** Iconos de línea dibujados con Java2D (así no dependen de fuentes ni de imágenes). */
+    /**
+     * Componente interno para dibujar iconos vectoriales mediante Java2D.
+     */
     private static class Icono extends JComponent {
  
         enum Tipo { ESTRELLA, USUARIO, BANCO, MENU }
@@ -510,5 +523,4 @@ public class MenuAdministradorFrame extends JFrame {
             g2.dispose();
         }
     }
-    
 }

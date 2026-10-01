@@ -2,9 +2,14 @@ package dtos;
 
 import java.time.LocalDateTime;
 
-
+/**
+ * Objeto de transferencia de datos (DTO) que contiene la información 
+ * detallada de un boleto que ha sido adquirido por un cliente.
+ * Agrupa datos del evento, la transacción financiera, los detalles del 
+ * asiento y la ubicación geográfica del evento.
+ */
 public class BoletoCompradoDTO {
-    
+
     private int idDetalles;
     private int idCuentaPersonal;
     private String nombre;
@@ -17,6 +22,9 @@ public class BoletoCompradoDTO {
     private String estatus;
     private int idCompra;
     private String claveNumerica;
+    private String ciudad;
+    private String estado;
+    private String calle;
 
     public BoletoCompradoDTO() {
     }
@@ -52,8 +60,6 @@ public class BoletoCompradoDTO {
     public void setClaveNumerica(String claveNumerica) {
         this.claveNumerica = claveNumerica;
     }
-    
-    
 
     public String getNombre() {
         return nombre;
@@ -118,7 +124,28 @@ public class BoletoCompradoDTO {
     public void setEstatus(String estatus) {
         this.estatus = estatus;
     }
-    
-    
-    
+
+    public String getCiudad() {
+        return ciudad;
+    }
+
+    public void setCiudad(String ciudad) {
+        this.ciudad = ciudad;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getCalle() {
+        return calle;
+    }
+
+    public void setCalle(String calle) {
+        this.calle = calle;
+    }
 }

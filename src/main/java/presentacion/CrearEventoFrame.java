@@ -67,7 +67,7 @@ public class CrearEventoFrame extends JFrame {
     private JSpinner spnCantidadBoletos;
     private JSpinner spnDia, spnMes, spnAnio, spnHora, spnMinuto;
     private JTextField txtCalle, txtColonia, txtNumero, txtCiudad, txtEstado;
-    private JButton btnGuardar, btnCancelar;
+    private JButton btnGuardar;
     
     /**
      * Inicializa la ventana de creación de eventos vinculada al administrador en sesión.
@@ -168,19 +168,14 @@ public class CrearEventoFrame extends JFrame {
         add(form, BorderLayout.CENTER);
 
         btnGuardar = new JButton("Guardar Evento");
-        btnCancelar = new JButton("Cancelar");
         Font fuente = new Font("Segoe UI", Font.PLAIN, 15);
         btnGuardar.setFont(fuente);
-        btnCancelar.setFont(fuente);
         btnGuardar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnCancelar.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         btnGuardar.addActionListener(e -> guardar());
-        btnCancelar.addActionListener(e -> dispose());
 
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         panelBotones.add(btnGuardar);
-        panelBotones.add(btnCancelar);
         add(panelBotones, BorderLayout.SOUTH);
         
         cargarCuentas();

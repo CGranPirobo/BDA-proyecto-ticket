@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package persistencia.datos;
 
 import Persistencias.IConexion;
@@ -15,6 +11,9 @@ import java.util.List;
 import persistencia.datos.interfaces.ICuentaPersonalDAO;
 
 /**
+ * Clase de acceso a datos (DAO) para la gestión de cuentas bancarias personales.
+ * Se encarga de las operaciones de lectura e inserción de las cuentas 
+ * asociadas a los clientes del sistema en la base de datos.
  *
  * @author Pirown
  */
@@ -31,7 +30,8 @@ public class CuentaPersonalDAO implements ICuentaPersonalDAO {
         String sql = "SELECT idCuentaPersonal, No_Cuenta, banco, saldo, idCliente FROM cuenta_personal WHERE idCliente = ?";
         List<CuentaPersonalEntidad> cuentas = new ArrayList<>();
 
-        try (Connection conexionBD = conexion.crearConexion(); PreparedStatement comando = conexionBD.prepareStatement(sql)) {
+        try (Connection conexionBD = conexion.crearConexion(); 
+             PreparedStatement comando = conexionBD.prepareStatement(sql)) {
 
             comando.setInt(1, idCliente);
             try (ResultSet rs = comando.executeQuery()) {
@@ -55,7 +55,8 @@ public class CuentaPersonalDAO implements ICuentaPersonalDAO {
     public void insertar(CuentaPersonalEntidad cuenta) throws PersistenciaException {
         String sql = "INSERT INTO cuenta_personal (banco, No_Cuenta, saldo, idCliente) VALUES (?, ?, ?, ?)";
 
-        try (Connection conexionBD = conexion.crearConexion(); PreparedStatement comando = conexionBD.prepareStatement(sql)) {
+        try (Connection conexionBD = conexion.crearConexion(); 
+             PreparedStatement comando = conexionBD.prepareStatement(sql)) {
 
             comando.setString(1, cuenta.getBanco());
             comando.setString(2, cuenta.getNumeroCuenta());
@@ -64,7 +65,6 @@ public class CuentaPersonalDAO implements ICuentaPersonalDAO {
             comando.executeUpdate();
 
         } catch (Exception e) {
-            e.printStackTrace(); // Útil para ver errores en consola durante el desarrollo
             throw new PersistenciaException("Error al registrar la cuenta bancaria en la base de datos.", e);
         }
     }

@@ -27,8 +27,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-
+/**
+ * Clase utilitaria encargada de instalar e inyectar un menú lateral de navegación 
+ * y una barra superior en las diferentes ventanas (JFrame) orientadas al administrador.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public final class MenuLateraladmin {
+    
     private static final int ANCHO_MENU = 280;
     private static final int ALTO_BARRA = 44;
  
@@ -37,9 +44,19 @@ public final class MenuLateraladmin {
     private static final Color COLOR_NEGRO = new Color(10, 10, 10);
     private static final Color COLOR_GRIS = new Color(110, 110, 110);
  
+    /**
+     * Constructor privado para evitar la instanciación de esta clase utilitaria.
+     */
     private MenuLateraladmin() {
     }
  
+    /**
+     * Instala el menú lateral y la barra superior en la ventana principal especificada 
+     * a partir de los datos del administrador en sesión.
+     * 
+     * @param frame Ventana de destino donde se acoplará el menú.
+     * @param admin Datos del administrador autenticado.
+     */
     public static void instalar(JFrame frame, AdministradorDTO admin) {
         Container original = frame.getContentPane();
         Color fondoOriginal = original.getBackground();
@@ -55,14 +72,19 @@ public final class MenuLateraladmin {
         centro.add(original, BorderLayout.CENTER);
         raiz.add(centro, BorderLayout.CENTER);
  
-        // La ventana crece para que el contenido original conserve su tamaño
         Dimension d = frame.getSize();
         frame.setSize(d.width + ANCHO_MENU, d.height + ALTO_BARRA);
         frame.setLocationRelativeTo(null);
     }
  
-    // ---------- Barra con el botón hamburguesa ----------
- 
+    /**
+     * Crea la barra superior que incluye el botón de menú hamburguesa.
+     * 
+     * @param frame Ventana contenedora.
+     * @param menu Panel del menú lateral.
+     * @param fondo Color de fondo original de la ventana.
+     * @return JPanel que representa la barra superior.
+     */
     private static JPanel crearBarra(JFrame frame, JPanel menu, Color fondo) {
         JPanel barra = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 8));
         barra.setBackground(fondo);
@@ -85,8 +107,13 @@ public final class MenuLateraladmin {
         return barra;
     }
  
-    // ---------- Menú ----------
- 
+    /**
+     * Construye y organiza el panel del menú lateral con las diferentes opciones de navegación administrativa.
+     * 
+     * @param frame Ventana contenedora.
+     * @param admin Datos del administrador en sesión.
+     * @return JPanel que representa el menú lateral.
+     */
     private static JPanel crearMenu(JFrame frame, AdministradorDTO admin) {
         JPanel menu = new JPanel();
         menu.setLayout(new BoxLayout(menu, BoxLayout.Y_AXIS));
@@ -104,13 +131,22 @@ public final class MenuLateraladmin {
                 CuentasEmpresa.class, () -> new CuentasEmpresa(admin));
         agregarOpcion(menu, frame, "Dashboard Ganancias", "Verifica las ganancias en general o por evento",
                 GananciasFrame.class, () -> new GananciasFrame(admin));
-        // TODO: cuando exista la pantalla de la bitácora, pasar aquí su clase y su constructor
         agregarOpcion(menu, frame, "Bitacora", "Ver todos los movimientos",
                 BitacoraFrame.class, () -> new BitacoraFrame(admin));
         menu.add(Box.createVerticalGlue());
         return menu;
     }
  
+    /**
+     * Agrega una opción de navegación individual al menú lateral de administración.
+     * 
+     * @param menu Panel contenedor de opciones.
+     * @param frame Ventana actual.
+     * @param titulo Título de la opción.
+     * @param descripcion Descripción breve de la sección.
+     * @param destino Clase del JFrame de destino.
+     * @param fabrica Función constructora de la ventana de destino.
+     */
     private static void agregarOpcion(JPanel menu, JFrame frame, String titulo, String descripcion,
             Class<?> destino, Supplier<? extends JFrame> fabrica) {
         JPanel fila = new JPanel(new BorderLayout(14, 0));
@@ -162,7 +198,14 @@ public final class MenuLateraladmin {
         menu.add(Box.createRigidArea(new Dimension(0, 8)));
     }
  
-    /** Abre la pantalla elegida y cierra la actual (si ya estás en ella, no hace nada). */
+    /**
+     * Abre la pantalla elegida y cierra la actual, omitiendo la acción si ya se encuentra en ella 
+     * o si la sección se encuentra en desarrollo.
+     * 
+     * @param actual Ventana actual.
+     * @param destino Clase del JFrame de destino.
+     * @param fabrica Proveedor de la instancia del nuevo JFrame.
+     */
     private static void navegar(JFrame actual, Class<?> destino, Supplier<? extends JFrame> fabrica) {
         if (fabrica == null) {
             JOptionPane.showMessageDialog(actual, "La bitácora está en construcción.",
@@ -176,8 +219,9 @@ public final class MenuLateraladmin {
         actual.dispose();
     }
  
-    // ---------- Iconos dibujados con Java2D ----------
- 
+    /**
+     * Componente interno para dibujar iconos vectoriales mediante Java2D.
+     */
     private static class Icono extends JComponent {
  
         enum Tipo { ESTRELLA, MENU }

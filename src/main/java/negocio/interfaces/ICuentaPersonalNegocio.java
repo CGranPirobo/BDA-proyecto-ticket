@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package negocio.interfaces;
 
 import dtos.CuentaPersonalDTO;
@@ -9,7 +5,10 @@ import java.util.List;
 import negocio.NegocioException;
 
 /**
- *
+ * Interfaz que define el contrato para las operaciones de negocio 
+ * correspondientes a la vinculación y consulta de las cuentas 
+ * bancarias personales de los clientes.
+ * 
  * @author Pirown
  */
 public interface ICuentaPersonalNegocio {

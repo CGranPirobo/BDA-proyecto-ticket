@@ -12,9 +12,15 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.List;
-import persistencia.datos.ClienteDAO;
 import persistencia.datos.CompraDAO;
 
+/**
+ * Ventana de interfaz gráfica que representa el menú principal del cliente, 
+ * mostrando un carrusel de tarjetas con los eventos en los que posee boletos activos.
+ * 
+ * @author gaelc
+ * @author M-14
+ */
 public class MenuPrincipalFrame extends JFrame {
     
     private static final Color COLOR_FONDO = new Color(217, 217, 217);
@@ -29,31 +35,41 @@ public class MenuPrincipalFrame extends JFrame {
     private JButton btnConfigurarCuenta;
     private JButton btnCerrarSesion;
 
-    /** Un evento del cliente y cuántos boletos tiene de él. */
+    /**
+     * Registro interno que almacena el nombre de un evento y la cantidad 
+     * de boletos vigentes asociados que posee el cliente.
+     */
     private record EventoTarjeta(String nombre, int boletos) {
     }
     
-    // Modifica el constructor del Menú para recibir el cliente
     private final ClienteDTO cliente;
     private final CompraDAO compra;
     private final List<EventoTarjeta> eventos = new ArrayList<>();
     private int inicio = 0;
-    
-    
     
     private JPanel panelTarjetas;
     private JButton btnAnterior;
     private JButton btnSiguiente;
     private JLabel lblMensaje;
 
+    /**
+     * Inicializa el menú principal vinculado al cliente en sesión, cargando 
+     * sus eventos y configurando la barra de navegación lateral.
+     * 
+     * @param cliente Datos del cliente autenticado.
+     */
     public MenuPrincipalFrame(ClienteDTO cliente) {
         this.cliente = cliente;
         this.compra = new CompraDAO(new Conexion());
         configurarVentana();
         inicializarComponentes();
+        cargarEventos();
         MenuLateralCliente.instalar(this, cliente);
     }
 
+    /**
+     * Configura las propiedades principales de la ventana.
+     */
     private void configurarVentana() {
         setTitle("TuTicket - Menú Principal");
         setSize(500, 500);
@@ -63,17 +79,20 @@ public class MenuPrincipalFrame extends JFrame {
         setLayout(new BorderLayout(20, 20));
     }
 
+    /**
+     * Inicializa y organiza los componentes visuales de la interfaz, 
+     * incluyendo el encabezado, los controles de desplazamiento y el panel de tarjetas.
+     */
     private void inicializarComponentes() {
         JPanel contenido = new JPanel();
         contenido.setOpaque(false);
         contenido.setLayout(new BoxLayout(contenido, BoxLayout.Y_AXIS));
         contenido.setBorder(BorderFactory.createEmptyBorder(15, 35, 30, 35));
  
-        // ----- Encabezado: "Tus eventos" + flechas -----
         JLabel lblTitulo = new JLabel("Tus eventos");
         lblTitulo.setFont(new Font("Segoe UI", Font.PLAIN, 34));
         lblTitulo.setForeground(COLOR_NEGRO);
- 
+
         btnAnterior = crearFlecha("\u2039");
         btnSiguiente = crearFlecha("\u203A");
         btnAnterior.addActionListener(e -> {
@@ -88,7 +107,7 @@ public class MenuPrincipalFrame extends JFrame {
                 mostrarTarjetas();
             }
         });
- 
+
         JPanel encabezado = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         encabezado.setOpaque(false);
         encabezado.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -98,8 +117,7 @@ public class MenuPrincipalFrame extends JFrame {
         encabezado.add(btnSiguiente);
         contenido.add(encabezado);
         contenido.add(Box.createRigidArea(new Dimension(0, 15)));
- 
-        // ----- Tarjetas -----
+
         panelTarjetas = new JPanel();
         panelTarjetas.setOpaque(false);
         panelTarjetas.setLayout(new BoxLayout(panelTarjetas, BoxLayout.X_AXIS));
@@ -107,26 +125,27 @@ public class MenuPrincipalFrame extends JFrame {
         panelTarjetas.setPreferredSize(new Dimension(630, 120));
         panelTarjetas.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
         contenido.add(panelTarjetas);
- 
+
         lblMensaje = new JLabel("Todavía no tienes eventos. Compra boletos desde la sección Eventos.");
         lblMensaje.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         lblMensaje.setForeground(COLOR_GRIS);
         lblMensaje.setAlignmentX(Component.LEFT_ALIGNMENT);
         lblMensaje.setVisible(false);
         contenido.add(lblMensaje);
- 
+
         contenido.add(Box.createVerticalGlue());
         add(contenido, BorderLayout.CENTER);
     }
- 
-    // ---------- Datos ----------
- 
+
+    /**
+     * Consulta los boletos adquiridos por el cliente en la base de datos 
+     * y agrupa los eventos vigentes (no cancelados) para su visualización.
+     */
     private void cargarEventos() {
         eventos.clear();
         try {
             List<BoletoCompradoDTO> boletos = compra.obtenerBoletosPorCliente(cliente.getIdCliente());
- 
-            // Un evento por nombre, contando solo los boletos vigentes (no cancelados)
+
             Map<String, Integer> porEvento = new LinkedHashMap<>();
             for (BoletoCompradoDTO b : boletos) {
                 if ("comprado".equalsIgnoreCase(b.getEstatus())) {
@@ -142,26 +161,34 @@ public class MenuPrincipalFrame extends JFrame {
         inicio = 0;
         mostrarTarjetas();
     }
- 
+
+    /**
+     * Actualiza y renderiza las tarjetas de eventos visibles en el carrusel 
+     * según el índice de desplazamiento actual.
+     */
     private void mostrarTarjetas() {
         panelTarjetas.removeAll();
- 
+
         int fin = Math.min(inicio + TARJETAS_VISIBLES, eventos.size());
         for (int i = inicio; i < fin; i++) {
             panelTarjetas.add(crearTarjeta(eventos.get(i)));
             panelTarjetas.add(Box.createRigidArea(new Dimension(20, 0)));
         }
- 
+
         lblMensaje.setVisible(eventos.isEmpty());
         btnAnterior.setEnabled(inicio > 0);
         btnSiguiente.setEnabled(inicio + TARJETAS_VISIBLES < eventos.size());
- 
+
         panelTarjetas.revalidate();
         panelTarjetas.repaint();
     }
- 
-    // ---------- Componentes ----------
- 
+
+    /**
+     * Crea un botón de flecha estilizado para navegar por el carrusel de eventos.
+     * 
+     * @param texto Carácter o símbolo de la flecha.
+     * @return JButton configurado.
+     */
     private JButton crearFlecha(String texto) {
         JButton boton = new JButton(texto);
         boton.setFont(new Font("Segoe UI", Font.PLAIN, 34));
@@ -173,8 +200,14 @@ public class MenuPrincipalFrame extends JFrame {
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return boton;
     }
- 
-    /** Tarjeta morada con el nombre del evento y cuántos boletos tiene el cliente. */
+
+    /**
+     * Crea un componente de tarjeta con diseño de degradado que muestra 
+     * el nombre del evento y el total de boletos que posee el cliente.
+     * 
+     * @param evento Objeto con los datos del evento y cantidad de boletos.
+     * @return JPanel que representa la tarjeta.
+     */
     private JPanel crearTarjeta(EventoTarjeta evento) {
         JPanel tarjeta = new JPanel(new BorderLayout()) {
             @Override
@@ -193,20 +226,19 @@ public class MenuPrincipalFrame extends JFrame {
         tarjeta.setMaximumSize(new Dimension(190, 110));
         tarjeta.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
         tarjeta.setCursor(new Cursor(Cursor.HAND_CURSOR));
- 
+
         JLabel lblNombre = new JLabel("<html><div style='text-align:center; width:150px'>"
                 + escapar(evento.nombre()) + "</div></html>", SwingConstants.CENTER);
         lblNombre.setFont(new Font("Segoe UI", Font.BOLD | Font.ITALIC, 17));
         lblNombre.setForeground(Color.WHITE);
         tarjeta.add(lblNombre, BorderLayout.CENTER);
- 
+
         JLabel lblBoletos = new JLabel(evento.boletos() + (evento.boletos() == 1 ? " boleto" : " boletos"),
                 SwingConstants.CENTER);
         lblBoletos.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         lblBoletos.setForeground(Color.WHITE);
         tarjeta.add(lblBoletos, BorderLayout.SOUTH);
- 
-        // Al hacer clic se abre "Mis boletos"
+
         tarjeta.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -216,7 +248,13 @@ public class MenuPrincipalFrame extends JFrame {
         });
         return tarjeta;
     }
- 
+
+    /**
+     * Escapa caracteres especiales en formato HTML para prevenir errores de renderizado en las etiquetas Swing.
+     * 
+     * @param texto Texto original a escapar.
+     * @param texto modificado y seguro para HTML.
+     */
     private String escapar(String texto) {
         if (texto == null) {
             return "";

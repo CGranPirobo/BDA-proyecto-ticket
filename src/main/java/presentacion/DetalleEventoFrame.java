@@ -28,7 +28,7 @@ public class DetalleEventoFrame extends JFrame {
         this.evento = evento;
         configurarVentana();
         inicializarComponentes();
-        MenuLateralCliente.instalar(this, cliente);
+        //MenuLateralCliente.instalar(this, cliente);
     }
 
     /**
