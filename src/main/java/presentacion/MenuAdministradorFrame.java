@@ -10,6 +10,7 @@ public class MenuAdministradorFrame extends JFrame {
     private JButton btnConfigurarCuentas;
     private JButton btnCerrarSesion;
     private JButton btnModificarEvento;
+    private JButton btnGanancias;
     private final AdministradorDTO admin;
 
     public MenuAdministradorFrame(AdministradorDTO admin) {
@@ -45,10 +46,11 @@ public class MenuAdministradorFrame extends JFrame {
         btnConfigurarCuentas = new JButton("Configurar Cuentas Bancarias");
         btnCerrarSesion = new JButton("Cerrar Sesión");
         btnModificarEvento = new JButton("Modificar un Evento");
+        btnGanancias = new JButton("Ver Ganancias");
 
         // Ajuste de fuentes y cursores
         Font fuenteBotones = new Font("Segoe UI", Font.PLAIN, 16);
-        JButton[] botones = {btnCrearEvento, btnConfigurarCuentas, btnCerrarSesion, btnModificarEvento};
+        JButton[] botones = {btnCrearEvento, btnConfigurarCuentas, btnCerrarSesion, btnModificarEvento, btnGanancias};
         
         for (JButton boton : botones) {
             boton.setFont(fuenteBotones);
@@ -69,6 +71,10 @@ public class MenuAdministradorFrame extends JFrame {
         btnConfigurarCuentas.addActionListener(e -> {
            new CuentasEmpresa(admin).setVisible(true);
         });
+        
+        btnGanancias.addActionListener(e -> {
+           new GananciasFrame(admin).setVisible(true);
+        });
 
         btnCerrarSesion.addActionListener(e -> {
             int confirmacion = JOptionPane.showConfirmDialog(this, "¿Cerrar la sesión de administrador?", "Cerrar Sesión", JOptionPane.YES_NO_OPTION);
@@ -84,6 +90,8 @@ public class MenuAdministradorFrame extends JFrame {
         panelBotones.add(btnModificarEvento);
         panelBotones.add(Box.createRigidArea(new Dimension(0, 20))); // Espaciador
         panelBotones.add(btnConfigurarCuentas);
+        panelBotones.add(Box.createRigidArea(new Dimension(0, 20))); // Espaciador
+        panelBotones.add(btnGanancias);
         panelBotones.add(Box.createRigidArea(new Dimension(0, 20))); // Espaciador
         panelBotones.add(btnCerrarSesion);
 

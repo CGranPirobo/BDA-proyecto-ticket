@@ -13,6 +13,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -34,7 +36,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import persistencia.datos.CompraDAO;
-import persistencia.datos.CompradoDAO;
 
 /**
  *
@@ -188,13 +189,16 @@ public class MisBoletosFrame extends JFrame{
     }
 
     private void confirmarCancelacion(BoletoCompradoDTO b) {
-        int opcion = JOptionPane.showConfirmDialog(this,
-                "¿Cancelar el boleto de " + b.getNombre() + " (sección " + b.getSeccion()
-                + ", fila " + b.getFila() + ", asiento " + b.getAsiento() + ")?",
-                "Cancelar boleto", JOptionPane.YES_NO_OPTION);
-        if (opcion == JOptionPane.YES_OPTION) {
-            cancelarBoleto(b);
+        setEnabled(false); // mientras la pantalla de cancelación está abierta, esta se bloquea
+    CancelarBoletoFrame pantalla = new CancelarBoletoFrame(this, b, () -> cancelarBoleto(b));
+    pantalla.addWindowListener(new WindowAdapter() {
+        @Override
+        public void windowClosed(WindowEvent e) {
+            setEnabled(true); // al cerrarse (confirmando o no), se vuelve a activar
+            toFront();
         }
+    });
+    pantalla.setVisible(true);
     }
 
     private void cancelarBoleto(BoletoCompradoDTO b) {

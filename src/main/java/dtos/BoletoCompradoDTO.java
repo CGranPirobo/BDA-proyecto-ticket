@@ -15,6 +15,8 @@ public class BoletoCompradoDTO {
     private String asiento;
     private LocalDateTime fechaCompra;
     private String estatus;
+    private int idCompra;
+    private String claveNumerica;
 
     public BoletoCompradoDTO() {
     }
@@ -34,6 +36,24 @@ public class BoletoCompradoDTO {
     public void setIdCuentaPersonal(int idCuentaPersonal) {
         this.idCuentaPersonal = idCuentaPersonal;
     }
+
+    public int getIdCompra() {
+        return idCompra;
+    }
+
+    public void setIdCompra(int idCompra) {
+        this.idCompra = idCompra;
+    }
+
+    public String getClaveNumerica() {
+        return claveNumerica;
+    }
+
+    public void setClaveNumerica(String claveNumerica) {
+        this.claveNumerica = claveNumerica;
+    }
+    
+    
 
     public String getNombre() {
         return nombre;

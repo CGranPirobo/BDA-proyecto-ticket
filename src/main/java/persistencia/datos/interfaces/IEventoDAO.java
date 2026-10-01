@@ -23,4 +23,7 @@ public interface IEventoDAO {
     //cuenta los boletos con estatus "comprado" de un evento
     int contarBoletosVendidos(int idEvento) throws PersistenciaException;
     
+    //suma lo pagado por los boletos con estatus "comprado" de un evento
+    double obtenerMontoVendido(int idEvento) throws PersistenciaException;
+    
 }

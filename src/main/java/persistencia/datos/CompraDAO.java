@@ -117,7 +117,7 @@ public class CompraDAO {
     public List<BoletoCompradoDTO> obtenerBoletosPorCliente(int idCliente) throws PersistenciaException {
         List<BoletoCompradoDTO> boletos = new ArrayList<>();
 
-        String sql = "SELECT db.idDetalles, e.nombre AS evento_nombre, b.categoria, "
+        String sql = "SELECT db.idDetalles,c.idCompra,b.claveNumerica, e.nombre AS evento_nombre, b.categoria, "
                    + "db.precio_pagado, b.seccion, b.fila, b.asiento, c.fechaCompra, db.estatus "
                    + "FROM detalles_boleto db "
                    + "INNER JOIN compra c ON db.idCompra = c.idCompra "
@@ -136,6 +136,8 @@ public class CompraDAO {
                 while (rs.next()) {
                     BoletoCompradoDTO dto = new BoletoCompradoDTO();
                     dto.setIdDetalles(rs.getInt("idDetalles"));
+                    dto.setIdCompra(rs.getInt("idCompra"));
+                    dto.setClaveNumerica(rs.getString("claveNumerica"));
                     dto.setNombre(rs.getString("evento_nombre"));
                     dto.setCategoria(rs.getString("categoria"));
                     dto.setPrecioPago(rs.getDouble("precio_pagado"));
